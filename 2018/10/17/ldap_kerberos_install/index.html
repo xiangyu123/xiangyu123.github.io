@@ -22,7 +22,7 @@
     <meta name="description" content="Tobey's personal blog">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>ldap · Tobey&#39;s Notes</title>
+    <title>ldap和kerberos安装 · Tobey&#39;s Notes</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -217,7 +217,7 @@
                 <a href="/" >Tobey&#39;s Notes</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">ldap</a>
+                <a href="#" class="post-name">ldap和kerberos安装</a>
             </div>
     </div>
     
@@ -247,7 +247,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            ldap
+            ldap和kerberos安装
             <!-- 404 -->
             
         </h1>
@@ -407,7 +407,7 @@ height:50vh;
 <h5 id="1、OpenLdap简介"><a href="#1、OpenLdap简介" class="headerlink" title="1、OpenLdap简介"></a>1、OpenLdap简介</h5><p>&nbsp;&nbsp;&nbsp;&nbsp;OpenLDAP目录中的信息是以树状的层次结构来存储数据(（这很类同于DNS），最顶<br>  层即根部称作“基准DN”，形如“dc=mydomain,dc=org”或者“o=mydomain.org”，前一种方式更为灵活也是Windows AD中使用的方式。  </p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;在根目录的下面有很多的文件和目录，为了把这些大量的数据从逻辑上分开，OpenLDAP像其它的目录服务协议一样使用OU（Organization Unit，组织单元），可以用来表示公司内部机构，如部门等，也可以用来表示设备、人员等。同时OU还可以有子OU，用来表示更为细致的分类。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;OpenLDAP中每一条记录都有一个唯一的区别于其它记录的名字DN（Distinguished Name）,其处在“叶子”位置的部分称作RDN(用户条目的相对标识名)。如dn:cn=tom,ou=animals,dc=ilanni,dc=com中cn即为RDN，而RDN在一个OU中必须是唯一的。</p>
-<p><img src="/2018/10/17/ldap和kerberos安装/ldap_pic1.png" alt="image"></p>
+<p><img src="/2018/10/17/ldap_kerberos_install/ldap_pic1.png" alt="image"></p>
 <p>其中o=dlw.com是dc=dlw,dc=com的简写</p>
 <p>部署的组织架构:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dn: dc=qbos,dc=com                      # 公司</span><br><span class="line">dn: ou=krb5,dc=qbos,dc=com              # 部门</span><br><span class="line">dn: cn=admin,dc=qbos,dc=com             # LDAP管理用户</span><br><span class="line">dn: cn=kdc-srv,ou=krb5,dc=qbos,dc=com   # kdc连接ldap用户</span><br><span class="line">dn: cn=adm-srv,ou=krb5,dc=qbos,dc=com   # kadmin连接ldap用户</span><br></pre></td></tr></table></figure></p>
 <h5 id="1、安装软件包"><a href="#1、安装软件包" class="headerlink" title="1、安装软件包"></a>1、安装软件包</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># yum install openldap openldap-servers openldap-clients openldap-devel compat-openldap -y</span><br></pre></td></tr></table></figure>
@@ -418,7 +418,7 @@ height:50vh;
 <h3 id="搭建kerberos服务端"><a href="#搭建kerberos服务端" class="headerlink" title="搭建kerberos服务端"></a>搭建kerberos服务端</h3><blockquote>
 <p>Kerberos 服务是单点登录系统，这意味着您对于每个会话只需向服务进行一次自我验证，即可自动保护该会话过程中所有后续事务的安全。服务对您进行验证后，即无需在每次使用基于 Kerberos 的服务时进行验证   <a href="https://web.mit.edu/kerberos/krb5-latest/doc/admin/index.html" target="_blank" rel="noopener">官方文档</a></p>
 </blockquote>
-<p><img src="/2018/10/17/ldap和kerberos安装/kerberos_pic1.png" alt="image"></p>
+<p><img src="/2018/10/17/ldap_kerberos_install/kerberos_pic1.png" alt="image"></p>
 <h5 id="1、安装过程"><a href="#1、安装过程" class="headerlink" title="1、安装过程"></a>1、安装过程</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># yum install krb5-server* krb5-auth-dialog* krb5-libs* krb5-workstation* -y</span><br></pre></td></tr></table></figure>
 <h5 id="2、修改配置文件"><a href="#2、修改配置文件" class="headerlink" title="2、修改配置文件"></a>2、修改配置文件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">编辑krb5.conf</span><br><span class="line"># vim /etc/krb5.conf</span><br><span class="line"></span><br><span class="line">[logging]</span><br><span class="line"> default = FILE:/var/log/krb5libs.log</span><br><span class="line"> kdc = FILE:/var/log/krb5kdc.log</span><br><span class="line"> admin_server = FILE:/var/log/kadmind.log</span><br><span class="line"></span><br><span class="line">[libdefaults]</span><br><span class="line"> default_realm = QBOS.COM          # realm要与ldap DC保持一致</span><br><span class="line"> dns_lookup_realm = false</span><br><span class="line"> dns_lookup_kdc = false</span><br><span class="line"> ticket_lifetime = 24h             # 票据生命周期</span><br><span class="line"> renew_lifetime = 7d</span><br><span class="line"> forwardable = false</span><br><span class="line"></span><br><span class="line">[realms]</span><br><span class="line"> QBOS.COM = &#123;</span><br><span class="line">  kdc = 127.0.0.1:88                    # kdc 服务</span><br><span class="line">  kadmin_server = 127.0.0.1:749         # 远程管理kdc服务</span><br><span class="line">  database_module = openldap_ldapconf   # 数据信息保存</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">[domain_realm]</span><br><span class="line"> .qbos.com = QBOS.COM</span><br><span class="line"> qbos.com = QBOS.COM</span><br><span class="line"></span><br><span class="line">[kdc]</span><br><span class="line"> profile = /var/kerberos/krb5kdc/kdc.conf        # 密钥分发中心配置文件</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[dbdefaults]</span><br><span class="line"> ldap_kerberos_container_dn = ou=krb5,dc=qbos,dc=com</span><br><span class="line"></span><br><span class="line">[dbmodules]</span><br><span class="line"> openldap_ldapconf = &#123;</span><br><span class="line">   db_library = kldap</span><br><span class="line">   ldap_kdc_dn = &quot;cn=kdc-srv,ou=krb5,dc=qbos,dc=com&quot;         # kdc-srv访问ldap用户</span><br><span class="line">   ldap_kadmind_dn = &quot;cn=adm-srv,ou=krb5,dc=qbos,dc=com&quot;     # adm-srv kadmin访问ldap用户</span><br><span class="line">   ldap_service_password_file = /var/kerberos/krb5kdc/service.keyfile  # 用户密码文件,使用kdb5_ldap_util生成</span><br><span class="line">   ldap_servers = ldap://127.0.0.1    # ldap服务</span><br><span class="line">   ldap_conns_per_server = 5</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># mkdir /var/kerberos/krb5kdc/ssl/</span><br><span class="line"># vim /var/kerberos/krb5kdc/kdc.conf</span><br><span class="line">[kdcdefaults]</span><br><span class="line">  kdc_ports = 88</span><br><span class="line">  kdc_tcp_ports = 88</span><br><span class="line"></span><br><span class="line">[realms]</span><br><span class="line">  QBOS.COM = &#123;</span><br><span class="line">  pkinit_identity = FILE:/var/kerberos/krb5kdc/ssl/kdc.pem,/var/kerberos/krb5kdc/ssl/kdckey.pem   # kdc服务X.509格式的证书</span><br><span class="line">  pkinit_anchors = FILE:/var/kerberos/krb5kdc/ssl/cacert.pem    # 指定KDC信任签署客户端证书的可信根证书(CA)的位置</span><br><span class="line">  acl_file = /var/kerberos/krb5kdc/kadm5.acl      # 文件应包含所有获许管理 KDC 的主体名称</span><br><span class="line">  dict_file = /usr/share/dict/words </span><br><span class="line">  admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab  # kadmind主体的Keytab ：kadmin / fqdn，changepw / fqdn和kadmin / changepw</span><br><span class="line">  supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line">配置文件详解: https://docs.oracle.com/cd/E86824_01/html/E54775/kdc.conf-4.html  </span><br><span class="line">如果使用pkinit配置，生产principal时要添加 +requires_preauth</span><br></pre></td></tr></table></figure>
 <p>向数据库添加管理主体<br>可以根据需要添加任意数目的 admin 主体。至少必须添加一个 admin 主体，这样才能完成 KDC 配置过程<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># kadmin.local: addprinc kadmin/admin</span><br><span class="line">Enter password for principal kadmin/admin@QBOS.COM:&lt;Type the password&gt;</span><br><span class="line">Re-enter password for principal kadmin/admin@QBOS.COM: &lt;Type it again&gt;</span><br><span class="line">Principal &quot;kadmin/admin@QBOS.COM&quot; created.</span><br></pre></td></tr></table></figure></p>
@@ -450,9 +450,9 @@ height:50vh;
     
         <div class="license-wrapper">
             <p>原文作者：<a href="http://xiangyu123.github.io">Tobey</a>
-            <p>原文链接：<a href="http://xiangyu123.github.io/2018/10/17/ldap和kerberos安装/">http://xiangyu123.github.io/2018/10/17/ldap和kerberos安装/</a>
-            <p>发表日期：<a href="http://xiangyu123.github.io/2018/10/17/ldap和kerberos安装/">October 17th 2018, 6:22:22 pm</a>
-            <p>更新日期：<a href="http://xiangyu123.github.io/2018/10/17/ldap和kerberos安装/">October 17th 2018, 6:37:53 pm</a>
+            <p>原文链接：<a href="http://xiangyu123.github.io/2018/10/17/ldap_kerberos_install/">http://xiangyu123.github.io/2018/10/17/ldap_kerberos_install/</a>
+            <p>发表日期：<a href="http://xiangyu123.github.io/2018/10/17/ldap_kerberos_install/">October 17th 2018, 6:22:22 pm</a>
+            <p>更新日期：<a href="http://xiangyu123.github.io/2018/10/17/ldap_kerberos_install/">October 17th 2018, 6:42:20 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -633,7 +633,7 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/ldap和kerberos安装/" >ldap</a>
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/ldap_kerberos_install/" >ldap和kerberos安装</a>
         </li>
     
     
@@ -646,11 +646,11 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
-    
         <span class="sidebar-tag-name" data-tags="k8s"><span class="iconfont-archer">&#xe606;</span>k8s</span>
     
         <span class="sidebar-tag-name" data-tags="kubernetes"><span class="iconfont-archer">&#xe606;</span>kubernetes</span>
+    
+        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -685,9 +685,9 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
-    
         <span class="sidebar-category-name" data-categories="容器云"><span class="iconfont-archer">&#xe60a;</span>容器云</span>
+    
+        <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
