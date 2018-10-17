@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Tobey">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Tobey">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="Tobey's personal blog">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>ldap · Tobey&#39;s Notes</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Tobey&#39;s Notes</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">ldap</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Tobey's Notes</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            ldap
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "ldap">ldap</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2.9k</span>阅读时长: <span class="post-count reading-time">14 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/10/17</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h4 id="OpenLdap搭建"><a href="#OpenLdap搭建" class="headerlink" title="OpenLdap搭建"></a>OpenLdap搭建</h4><blockquote>
+<p>LDAP是一款轻量级目录访问协议（Lightweight Directory Access Protocol，简称LDAP），属于开源集中账号管理架构的实现</p>
+</blockquote>
+<h5 id="1、OpenLdap简介"><a href="#1、OpenLdap简介" class="headerlink" title="1、OpenLdap简介"></a>1、OpenLdap简介</h5><p>&nbsp;&nbsp;&nbsp;&nbsp;OpenLDAP目录中的信息是以树状的层次结构来存储数据(（这很类同于DNS），最顶<br>  层即根部称作“基准DN”，形如“dc=mydomain,dc=org”或者“o=mydomain.org”，前一种方式更为灵活也是Windows AD中使用的方式。  </p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在根目录的下面有很多的文件和目录，为了把这些大量的数据从逻辑上分开，OpenLDAP像其它的目录服务协议一样使用OU（Organization Unit，组织单元），可以用来表示公司内部机构，如部门等，也可以用来表示设备、人员等。同时OU还可以有子OU，用来表示更为细致的分类。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;OpenLDAP中每一条记录都有一个唯一的区别于其它记录的名字DN（Distinguished Name）,其处在“叶子”位置的部分称作RDN(用户条目的相对标识名)。如dn:cn=tom,ou=animals,dc=ilanni,dc=com中cn即为RDN，而RDN在一个OU中必须是唯一的。</p>
+<p><img src="/2018/10/17/ldap和kerberos安装/ldap_pic1.png" alt="image"></p>
+<p>其中o=dlw.com是dc=dlw,dc=com的简写</p>
+<p>部署的组织架构:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dn: dc=qbos,dc=com                      # 公司</span><br><span class="line">dn: ou=krb5,dc=qbos,dc=com              # 部门</span><br><span class="line">dn: cn=admin,dc=qbos,dc=com             # LDAP管理用户</span><br><span class="line">dn: cn=kdc-srv,ou=krb5,dc=qbos,dc=com   # kdc连接ldap用户</span><br><span class="line">dn: cn=adm-srv,ou=krb5,dc=qbos,dc=com   # kadmin连接ldap用户</span><br></pre></td></tr></table></figure></p>
+<h5 id="1、安装软件包"><a href="#1、安装软件包" class="headerlink" title="1、安装软件包"></a>1、安装软件包</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># yum install openldap openldap-servers openldap-clients openldap-devel compat-openldap -y</span><br></pre></td></tr></table></figure>
+<h5 id="2、初始化配置"><a href="#2、初始化配置" class="headerlink" title="2、初始化配置"></a>2、初始化配置</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># cp /usr/share/openldap-servers/slapd.conf.obsolete /etc/openldap/slapd.conf</span><br><span class="line"># cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG</span><br></pre></td></tr></table></figure>
+<p>生产ldap服务管理用户密码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># slappasswd -s 123123</span><br><span class="line">&#123;SSHA&#125;FGTQwm900Ac+FPPTpzB9R1ZHNVY/MOXP  # hash加密后的值，直接复制到配置文件中使用</span><br></pre></td></tr></table></figure></p>
+<p>修改slap.conf，支持kerberos<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"># vim /etc/openldap/slapd.conf</span><br><span class="line">include         /etc/openldap/schema/corba.schema</span><br><span class="line">include         /etc/openldap/schema/core.schema</span><br><span class="line">include         /etc/openldap/schema/cosine.schema</span><br><span class="line">include         /etc/openldap/schema/nis.schema</span><br><span class="line"># kerberos使用的schema文件</span><br><span class="line">include         /etc/openldap/schema/kerberos.schema</span><br><span class="line">pidfile         /var/run/openldap/slapd.pid</span><br><span class="line">argsfile        /var/run/openldap/slapd.args</span><br><span class="line">database        bdb</span><br><span class="line"># 组织后缀</span><br><span class="line">suffix          &quot;dc=qbos,dc=com&quot;           </span><br><span class="line"># 管理员账号</span><br><span class="line">rootdn          &quot;cn=admin,dc=qbos,dc=com&quot;</span><br><span class="line"># 管理员密码(slappasswd生产的密码)</span><br><span class="line">rootpw          &#123;SSHA&#125;FslGWaaPsw9XcM7Sr3gc24lFQQe1NxRA </span><br><span class="line">directory       /var/lib/ldap</span><br><span class="line"># ldap数据库索引字段</span><br><span class="line">index           krbPrincipalName                      eq,pres,sub   </span><br><span class="line">index objectClass               eq,pres</span><br><span class="line">loglevel        256</span><br><span class="line"></span><br><span class="line"># acl规则</span><br><span class="line">access to attrs=userPassword,shadowLastChange</span><br><span class="line">    by dn=&quot;cn=admin,dc=qbos,dc=com&quot; write</span><br><span class="line">    by anonymous auth</span><br><span class="line">    by self write</span><br><span class="line">    by * none</span><br><span class="line">access to dn.subtree=&quot;ou=krb5,dc=qbos,dc=com&quot;</span><br><span class="line">    by dn=&quot;cn=admin,dc=qbos,dc=com&quot; write</span><br><span class="line">    # kerberos服务连接ladp的账号</span><br><span class="line">    by dn=&quot;cn=adm-srv,ou=krb5,dc=qbos,dc=com&quot; write   </span><br><span class="line">    # kerberos服务连接ladp的账号</span><br><span class="line">    by dn=&quot;cn=kdc-srv,ou=krb5,dc=qbos,dc=com&quot; read </span><br><span class="line">    by * none</span><br><span class="line">access to attrs=loginShell</span><br><span class="line">    by dn=&quot;cn=admin,dc=qbos,dc=com&quot; write</span><br><span class="line">    by self write</span><br><span class="line">    by * none</span><br><span class="line">access to dn.base=&quot;&quot;</span><br><span class="line">    by * read</span><br><span class="line">access to *</span><br><span class="line">    by self write</span><br><span class="line">    by * read</span><br><span class="line">access to *</span><br><span class="line">    by dn=&quot;cn=admin,dc=qbos,dc=com&quot; write</span><br><span class="line">    by users read</span><br><span class="line">    by * none</span><br><span class="line">access to *</span><br><span class="line">    by dn.exact=&quot;cn=admin,dc=qbos,dc=com&quot; read</span><br><span class="line">    by * none</span><br></pre></td></tr></table></figure></p>
+<h5 id="3、初始化ldap配置"><a href="#3、初始化ldap配置" class="headerlink" title="3、初始化ldap配置"></a>3、初始化ldap配置</h5><p>&nbsp;&nbsp;&nbsp;&nbsp;官方 对于 OpenLDAP 2.4 ，不推荐使用 slapd.conf 作为配置文件。从这个版本开始所有配置数据都保存在 /etc/openldap/slapd.d/中,在slapd.d生成配置文件，但是还是能使用slapd.conf修改配置的，每次修改后都要执行slaptest -f 命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"># rm -rf /etc/openldap/slapd.d/*</span><br><span class="line"></span><br><span class="line">修改文件权限</span><br><span class="line"># chown ldap.ldap -R /var/lib/ldap/</span><br><span class="line"></span><br><span class="line">每次修改完sldp.conf配置文件都要删除重新执行</span><br><span class="line"># slaptest -f /etc/openldap/slapd.conf -F /etc/openldap/slapd.d/</span><br><span class="line">报错忽略</span><br><span class="line">&gt; 5b99e55c bdb_db_open: database &quot;dc=qbos,dc=com&quot;: db_open(/var/lib/ldap/id2entry.bdb) failed: No such file or directory (2).</span><br><span class="line">&gt; 5b99e55c backend_startup_one (type=bdb, suffix=&quot;dc=qbos,dc=com&quot;): bi_db_open failed! (2)</span><br><span class="line">&gt; slap_startup failed (test would succeed using the -u switch)</span><br><span class="line"></span><br><span class="line"># chown ldap.ldap -R /etc/openldap/slapd.d/</span><br><span class="line"></span><br><span class="line">启动sldap服务</span><br><span class="line"># /etc/init.d/slapd start</span><br><span class="line"></span><br><span class="line">初始化ldap库，编写kerberos.ldif文件</span><br><span class="line"># vim /tmp/kerberos.ldif</span><br><span class="line">dn: dc=qbos, dc=com</span><br><span class="line">dc: qbos</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: dcObject</span><br><span class="line">objectClass: organization</span><br><span class="line">o: qbos.com</span><br><span class="line"></span><br><span class="line">dn: ou=krb5, dc=qbos,dc=com</span><br><span class="line">ou: krb5</span><br><span class="line">objectClass: organizationalUnit</span><br><span class="line"></span><br><span class="line">dn: cn=kdc-srv,ou=krb5,dc=qbos,dc=com</span><br><span class="line">cn: kdc-srv</span><br><span class="line">objectClass: simpleSecurityObject</span><br><span class="line">objectClass: organizationalRole</span><br><span class="line">userPassword: &#123;SSHA&#125;o4pwTcWIoY/CX8mx7gUyy0PRdwfKilAx </span><br><span class="line"></span><br><span class="line">dn: cn=adm-srv,ou=krb5,dc=qbos,dc=com</span><br><span class="line">cn: adm-srv</span><br><span class="line">objectClass: simpleSecurityObject</span><br><span class="line">objectClass: organizationalRole</span><br><span class="line">userPassword: &#123;SSHA&#125;o4pwTcWIoY/CX8mx7gUyy0PRdwfKilAx</span><br><span class="line"></span><br><span class="line">注：userPassword中的密码是slappasswd生成的</span><br><span class="line"></span><br><span class="line">导入kerberos.ldif到ldap库中</span><br><span class="line"># ldapadd -x -D &apos;cn=admin,dc=qbos,dc=com&apos; -w 123123 -h 127.0.0.1 -f /tmp/kerberos.ldif</span><br><span class="line"></span><br><span class="line">注：userPassword中的密码是slappasswd生成的, -w 是&apos;cn=admin,dc=qbos,dc=com&apos;真实的用户密码</span><br><span class="line"></span><br><span class="line">查看ldap数据库信息</span><br><span class="line"># ldapsearch -x -D &apos;cn=admin,dc=qbos,dc=com&apos; -w 123123 -b &apos;cn=adm-srv,ou=krb5,dc=qbos,dc=com&apos;</span><br></pre></td></tr></table></figure></p>
+<h3 id="搭建kerberos服务端"><a href="#搭建kerberos服务端" class="headerlink" title="搭建kerberos服务端"></a>搭建kerberos服务端</h3><blockquote>
+<p>Kerberos 服务是单点登录系统，这意味着您对于每个会话只需向服务进行一次自我验证，即可自动保护该会话过程中所有后续事务的安全。服务对您进行验证后，即无需在每次使用基于 Kerberos 的服务时进行验证   <a href="https://web.mit.edu/kerberos/krb5-latest/doc/admin/index.html" target="_blank" rel="noopener">官方文档</a></p>
+</blockquote>
+<p><img src="/2018/10/17/ldap和kerberos安装/kerberos_pic1.png" alt="image"></p>
+<h5 id="1、安装过程"><a href="#1、安装过程" class="headerlink" title="1、安装过程"></a>1、安装过程</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># yum install krb5-server* krb5-auth-dialog* krb5-libs* krb5-workstation* -y</span><br></pre></td></tr></table></figure>
+<h5 id="2、修改配置文件"><a href="#2、修改配置文件" class="headerlink" title="2、修改配置文件"></a>2、修改配置文件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">编辑krb5.conf</span><br><span class="line"># vim /etc/krb5.conf</span><br><span class="line"></span><br><span class="line">[logging]</span><br><span class="line"> default = FILE:/var/log/krb5libs.log</span><br><span class="line"> kdc = FILE:/var/log/krb5kdc.log</span><br><span class="line"> admin_server = FILE:/var/log/kadmind.log</span><br><span class="line"></span><br><span class="line">[libdefaults]</span><br><span class="line"> default_realm = QBOS.COM          # realm要与ldap DC保持一致</span><br><span class="line"> dns_lookup_realm = false</span><br><span class="line"> dns_lookup_kdc = false</span><br><span class="line"> ticket_lifetime = 24h             # 票据生命周期</span><br><span class="line"> renew_lifetime = 7d</span><br><span class="line"> forwardable = false</span><br><span class="line"></span><br><span class="line">[realms]</span><br><span class="line"> QBOS.COM = &#123;</span><br><span class="line">  kdc = 127.0.0.1:88                    # kdc 服务</span><br><span class="line">  kadmin_server = 127.0.0.1:749         # 远程管理kdc服务</span><br><span class="line">  database_module = openldap_ldapconf   # 数据信息保存</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">[domain_realm]</span><br><span class="line"> .qbos.com = QBOS.COM</span><br><span class="line"> qbos.com = QBOS.COM</span><br><span class="line"></span><br><span class="line">[kdc]</span><br><span class="line"> profile = /var/kerberos/krb5kdc/kdc.conf        # 密钥分发中心配置文件</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[dbdefaults]</span><br><span class="line"> ldap_kerberos_container_dn = ou=krb5,dc=qbos,dc=com</span><br><span class="line"></span><br><span class="line">[dbmodules]</span><br><span class="line"> openldap_ldapconf = &#123;</span><br><span class="line">   db_library = kldap</span><br><span class="line">   ldap_kdc_dn = &quot;cn=kdc-srv,ou=krb5,dc=qbos,dc=com&quot;         # kdc-srv访问ldap用户</span><br><span class="line">   ldap_kadmind_dn = &quot;cn=adm-srv,ou=krb5,dc=qbos,dc=com&quot;     # adm-srv kadmin访问ldap用户</span><br><span class="line">   ldap_service_password_file = /var/kerberos/krb5kdc/service.keyfile  # 用户密码文件,使用kdb5_ldap_util生成</span><br><span class="line">   ldap_servers = ldap://127.0.0.1    # ldap服务</span><br><span class="line">   ldap_conns_per_server = 5</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># mkdir /var/kerberos/krb5kdc/ssl/</span><br><span class="line"># vim /var/kerberos/krb5kdc/kdc.conf</span><br><span class="line">[kdcdefaults]</span><br><span class="line">  kdc_ports = 88</span><br><span class="line">  kdc_tcp_ports = 88</span><br><span class="line"></span><br><span class="line">[realms]</span><br><span class="line">  QBOS.COM = &#123;</span><br><span class="line">  pkinit_identity = FILE:/var/kerberos/krb5kdc/ssl/kdc.pem,/var/kerberos/krb5kdc/ssl/kdckey.pem   # kdc服务X.509格式的证书</span><br><span class="line">  pkinit_anchors = FILE:/var/kerberos/krb5kdc/ssl/cacert.pem    # 指定KDC信任签署客户端证书的可信根证书(CA)的位置</span><br><span class="line">  acl_file = /var/kerberos/krb5kdc/kadm5.acl      # 文件应包含所有获许管理 KDC 的主体名称</span><br><span class="line">  dict_file = /usr/share/dict/words </span><br><span class="line">  admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab  # kadmind主体的Keytab ：kadmin / fqdn，changepw / fqdn和kadmin / changepw</span><br><span class="line">  supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line">配置文件详解: https://docs.oracle.com/cd/E86824_01/html/E54775/kdc.conf-4.html  </span><br><span class="line">如果使用pkinit配置，生产principal时要添加 +requires_preauth</span><br></pre></td></tr></table></figure>
+<p>向数据库添加管理主体<br>可以根据需要添加任意数目的 admin 主体。至少必须添加一个 admin 主体，这样才能完成 KDC 配置过程<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># kadmin.local: addprinc kadmin/admin</span><br><span class="line">Enter password for principal kadmin/admin@QBOS.COM:&lt;Type the password&gt;</span><br><span class="line">Re-enter password for principal kadmin/admin@QBOS.COM: &lt;Type it again&gt;</span><br><span class="line">Principal &quot;kadmin/admin@QBOS.COM&quot; created.</span><br></pre></td></tr></table></figure></p>
+<p>为 kadmind 服务创建一个密钥表文件<br>此命令序列创建一个包含 kadmin/<fqdn> 和 changepw/<fqdn> 的主体项的特殊密钥表文件。kadmind 服务需要使用这些主体，要更改口令也需要使用这些主体<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># kadmin.local: ktadd -k /var/kerberos/krb5kdc/kadm5.keytab kadmin/admin@QBOS.COM</span><br><span class="line"># kadmin.local: ktadd -k /var/kerberos/krb5kdc/kadm5.keytab kadmin/changepw@QBOS.COM</span><br><span class="line"></span><br><span class="line">参考文件：https://docs.oracle.com/cd/E24847_01/html/819-7061/setup-9.html</span><br></pre></td></tr></table></figure></fqdn></fqdn></p>
+<h5 id="3、生成访问ldap的服务密码文件"><a href="#3、生成访问ldap的服务密码文件" class="headerlink" title="3、生成访问ldap的服务密码文件"></a>3、生成访问ldap的服务密码文件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># kdb5_ldap_util -D &quot;cn=admin,dc=qbos,dc=com&quot;  -w 123123 stashsrvpw -f /var/kerberos/krb5kdc/service.keyfile  &quot;cn=kdc-srv,ou=krb5,dc=qbos,dc=com&quot;</span><br><span class="line"># kdb5_ldap_util -D &quot;cn=admin,dc=qbos,dc=com&quot;  -w 123123 stashsrvpw -f /var/kerberos/krb5kdc/service.keyfile  &quot;cn=adm-srv,ou=krb5,dc=qbos,dc=com&quot;</span><br><span class="line"></span><br><span class="line">注：cn=admin,dc=qbos,dc=com 为ldap管理员与密码</span><br></pre></td></tr></table></figure>
+<h5 id="4、创建kerberos数据库"><a href="#4、创建kerberos数据库" class="headerlink" title="4、创建kerberos数据库"></a>4、创建kerberos数据库</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># kdb5_ldap_util -D &quot;cn=admin,dc=qbos,dc=com&quot; -H ldap://  create  -r QBOS.COM </span><br><span class="line"></span><br><span class="line">注：输入cn=admin,dc=qbos,dc=com密码以及创建KDC database master key密码</span><br></pre></td></tr></table></figure>
+<h5 id="5、启动kerberos服务"><a href="#5、启动kerberos服务" class="headerlink" title="5、启动kerberos服务"></a>5、启动kerberos服务</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># /etc/init.d/krb5kdc start</span><br><span class="line"># /etc/init.d/kadmin start</span><br><span class="line"># netstat -tnlp|egrep &apos;kadmin|krb5kdc&apos;</span><br><span class="line">tcp        0      0 0.0.0.0:749                 0.0.0.0:*                   LISTEN      11829/kadmind       </span><br><span class="line">tcp        0      0 0.0.0.0:464                 0.0.0.0:*                   LISTEN      11829/kadmind       </span><br><span class="line">tcp        0      0 0.0.0.0:88                  0.0.0.0:*                   LISTEN      11454/krb5kdc       </span><br><span class="line">tcp        0      0 :::749                      :::*                        LISTEN      11829/kadmind       </span><br><span class="line">tcp        0      0 :::464                      :::*                        LISTEN      11829/kadmind       </span><br><span class="line">tcp        0      0 :::88                       :::*                        LISTEN      11454/krb5kdc</span><br></pre></td></tr></table></figure>
+<h5 id="6、测试创建kerberos用户"><a href="#6、测试创建kerberos用户" class="headerlink" title="6、测试创建kerberos用户"></a>6、测试创建kerberos用户</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"># kadmin.local</span><br><span class="line">&gt; Authenticating as principal root/admin@QBOS.COM with password.</span><br><span class="line">&gt; kadmin.local:  addprinc admintest</span><br><span class="line">&gt; WARNING: no policy specified for admintest@QBOS.COM; defaulting to no policy</span><br><span class="line">&gt; Enter password for principal &quot;admintest@QBOS.COM&quot;: </span><br><span class="line">&gt; Re-enter password for principal &quot;admintest@QBOS.COM&quot;: </span><br><span class="line">&gt; Principal &quot;admintest@QBOS.COM&quot; created.</span><br><span class="line">&gt; kadmin.local:  q</span><br><span class="line"></span><br><span class="line">查看创建的用户是否写入ldap库中</span><br><span class="line"># slapcat |grep admintest</span><br><span class="line">5b9a34c3 bdb_monitor_db_open: monitoring disabled; configure monitor database to enable</span><br><span class="line">dn: krbPrincipalName=admintest@QBOS.COM,cn=QBOS.COM,ou=krb5,dc=qbos,dc=com</span><br><span class="line">krbPrincipalName: admintest@QBOS.COM</span><br><span class="line"></span><br><span class="line">验证用户登录</span><br><span class="line">kinit admintest</span><br><span class="line">Password for admintest@QBOS.COM: </span><br><span class="line"></span><br><span class="line"># klist </span><br><span class="line">Ticket cache: FILE:/tmp/krb5cc_0</span><br><span class="line">Default principal: admintest@QBOS.COM</span><br><span class="line"></span><br><span class="line">Valid starting     Expires            Service principal</span><br><span class="line">09/13/18 17:58:46  09/14/18 17:58:46  krbtgt/QBOS.COM@QBOS.COM</span><br><span class="line">	renew until 09/13/18 17:58:46</span><br></pre></td></tr></table></figure>
+<h5 id="7、问题"><a href="#7、问题" class="headerlink" title="7、问题"></a>7、问题</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">krb5kdc: Can not fetch master key (error: ?????????). - while fetching master key K/M for realm QBOS.COM</span><br><span class="line"></span><br><span class="line">原因：未初始化kerberos数据库</span><br><span class="line">解决：kdb5_ldap_util -D &quot;cn=admin,dc=qbos,dc=com&quot; -H ldap://  create  -r QBOS.COM (数据库为LDAP)</span><br><span class="line">如果不是LDAP，使用 /usr/sbin/kdb5_util create -s</span><br></pre></td></tr></table></figure>
+<h4 id="搭建kerberos客户端"><a href="#搭建kerberos客户端" class="headerlink" title="搭建kerberos客户端"></a>搭建kerberos客户端</h4><h5 id="1、安装kerberos客户端"><a href="#1、安装kerberos客户端" class="headerlink" title="1、安装kerberos客户端"></a>1、安装kerberos客户端</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># yum install -y krb5-libs krb5-workstation krb5-devel</span><br></pre></td></tr></table></figure>
+<h5 id="2、修改配置文件-1"><a href="#2、修改配置文件-1" class="headerlink" title="2、修改配置文件"></a>2、修改配置文件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">修改kerberos配置文件</span><br><span class="line"># vim /etc/krb5.conf</span><br><span class="line">[libdefaults]</span><br><span class="line"> default_realm = QBOS.COM     #默认域</span><br><span class="line"> dns_lookup_realm = false</span><br><span class="line"> dns_lookup_kdc = false</span><br><span class="line"> ticket_lifetime = 24h</span><br><span class="line"> renew_lifetime = 7d</span><br><span class="line"> forwardable = false</span><br><span class="line"></span><br><span class="line">[realms]</span><br><span class="line"> QBOS.COM = &#123;</span><br><span class="line">  kdc = kdc1.qbos.com:88               # kdc配置</span><br><span class="line">  kdc = kdc2.qbos.com:88</span><br><span class="line">  kdc = kdc3.qbos.com:88</span><br><span class="line">  admin_server = kadmin.qbos.com:749   # kadmin配置</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">[domain_realm]</span><br><span class="line"> .qbos.com = QBOS.COM</span><br><span class="line"> qbos.com = QBOS.COM</span><br><span class="line"> </span><br><span class="line">修改sshd_conf,使其支持kerberos认证</span><br><span class="line"># vim /etc/ssh/sshd_config</span><br><span class="line">添加</span><br><span class="line">GSSAPIAuthentication yes</span><br><span class="line">GSSAPICleanupCredentials yes</span><br><span class="line"></span><br><span class="line">KerberosAuthentication yes</span><br><span class="line">KerberosOrLocalPasswd yes</span><br><span class="line">KerberosTicketCleanup yes</span><br><span class="line"></span><br><span class="line"># /etc/init.d/sshd restart</span><br></pre></td></tr></table></figure>
+<h5 id="3、生成keytab密钥表"><a href="#3、生成keytab密钥表" class="headerlink" title="3、生成keytab密钥表"></a>3、生成keytab密钥表</h5><blockquote>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;keytab密钥表是可以免密登录，如果用户有独立的密钥表是可以免密登录,提供服务的每台主机都必须包含称为 keytab（密钥表）的本地文件。<br> &nbsp;&nbsp;&nbsp;&nbsp; 要将服务密钥添加至密钥表文件，应使用 kadmin 的 ktadd 命令，将相应的服务主体添加至主机的密钥表文件。由于要将服务主体添加至密钥表文件，因此该主体必须已存在于 Kerberos 数据库中，以便 kadmin 可验证其存在<br>创建主机密钥表</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">创建主机kerberos主体</span><br><span class="line"># kadmin.local -p kadmin/admin -q &quot;addprinc -policy host_policy -randkey host/$HOSTNAME@QBOS.COM&quot;</span><br><span class="line"></span><br><span class="line">创建主机keytab密钥表</span><br><span class="line"># kadmin.local -p kadmin/admin -q &quot;ktadd -k /root/krb5.keytab.$IP host/$HOSTNAME@QBOS.COM&quot;</span><br><span class="line"></span><br><span class="line">将主机的keytab密钥表拷贝到客户端/etc/</span><br><span class="line"># scp /root/krb5.keytab.$IP $HOSTNAME:/etc/</span><br></pre></td></tr></table></figure>
+<h5 id="4、kerberos用户授权主机"><a href="#4、kerberos用户授权主机" class="headerlink" title="4、kerberos用户授权主机"></a>4、kerberos用户授权主机</h5><p>用户配置文件： .k5login  - 用于主机访问的Kerberos V5 acl文件，该文件驻留在用户的主目录，包含了Kerberos主体列表<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">在客户端主机172.28.0.106的root家目录下修改.k5login，授权给用户admintest</span><br><span class="line"></span><br><span class="line"># vim ~/.k5login</span><br><span class="line">...</span><br><span class="line">admintest@QBOS.COM</span><br></pre></td></tr></table></figure></p>
+<p>admintest通过<code>kinit</code>获取到票据后就可以<code>ssh root@172.28.0.106</code></p>
+<p>注：-policy为指定密码安全策略，可以使用 <code>list_policies</code> 查看密码策略列表，使用<code>get_policy</code>查看策略详情</p>
+<h4 id="kerberos双活与主从"><a href="#kerberos双活与主从" class="headerlink" title="kerberos双活与主从"></a>kerberos双活与主从</h4><p>kerberos 双主+主从实际上是通知ldap实现的，只需实现LDAP的双主+主从</p>
+<h5 id="1、LDAP双主-主从部署"><a href="#1、LDAP双主-主从部署" class="headerlink" title="1、LDAP双主+主从部署"></a>1、LDAP双主+主从部署</h5><p><a href="https://www.cnblogs.com/lemon-le/p/a44bfb750ed5c71b388f8fb0ae8c0472.html" target="_blank" rel="noopener">LDAP双主配置文档</a><br><a href="http://blog.51cto.com/skypegnu1/1939505" target="_blank" rel="noopener">LDAP主从配置文档</a></p>
+<h5 id="2、kerberos服务端配置"><a href="#2、kerberos服务端配置" class="headerlink" title="2、kerberos服务端配置"></a>2、kerberos服务端配置</h5><p>按照 <code>搭建kerberos客户端</code> 安装kerberos客户端，将 另一台 kerberos服务端配置CA、key、.k5.QBOS.COM 拷贝至相应位置即可</p>
+<h5 id="参考文档："><a href="#参考文档：" class="headerlink" title="参考文档："></a>参考文档：</h5><p><a href="https://www.ilanni.com/?p=13775" target="_blank" rel="noopener">https://www.ilanni.com/?p=13775</a><br><a href="https://www.cnblogs.com/zhaojonjon/p/5967281.html" target="_blank" rel="noopener">https://www.cnblogs.com/zhaojonjon/p/5967281.html</a><br><a href="https://www.cnblogs.com/zihanxing/p/7001201.html" target="_blank" rel="noopener">https://www.cnblogs.com/zihanxing/p/7001201.html</a><br><a href="https://docs.oracle.com/cd/E26926_01/html/E25889/refer-15.html" target="_blank" rel="noopener">https://docs.oracle.com/cd/E26926_01/html/E25889/refer-15.html</a><br><a href="http://k5wiki.kerberos.org/wiki/LDAP_on_Kerberos" target="_blank" rel="noopener">http://k5wiki.kerberos.org/wiki/LDAP_on_Kerberos</a></p>
+<p>kerberos主从<br><a href="https://help.ubuntu.com/lts/serverguide/kerberos-ldap.html.en" target="_blank" rel="noopener">https://help.ubuntu.com/lts/serverguide/kerberos-ldap.html.en</a></p>
+<p>kerberos x.509证书<br><a href="https://web.mit.edu/kerberos/krb5-latest/doc/admin/pkinit.html" target="_blank" rel="noopener">https://web.mit.edu/kerberos/krb5-latest/doc/admin/pkinit.html</a></p>
+<p>ssh conf配置<br><a href="https://www.cnblogs.com/Rozdy/p/4642928.html" target="_blank" rel="noopener">https://www.cnblogs.com/Rozdy/p/4642928.html</a></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://xiangyu123.github.io">Tobey</a>
+            <p>原文链接：<a href="http://xiangyu123.github.io/2018/10/17/ldap和kerberos安装/">http://xiangyu123.github.io/2018/10/17/ldap和kerberos安装/</a>
+            <p>发表日期：<a href="http://xiangyu123.github.io/2018/10/17/ldap和kerberos安装/">October 17th 2018, 6:22:22 pm</a>
+            <p>更新日期：<a href="http://xiangyu123.github.io/2018/10/17/ldap和kerberos安装/">October 17th 2018, 6:37:53 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/10/17/k8s-install/" title= "k8s-install">
+                    <div class="prevTitle">k8s-install</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:xuzhigui1991@163.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/xiangyu123" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/example_qr.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#OpenLdap搭建"><span class="toc-number">1.</span> <span class="toc-text">OpenLdap搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1、OpenLdap简介"><span class="toc-number">1.1.</span> <span class="toc-text">1、OpenLdap简介</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1、安装软件包"><span class="toc-number">1.2.</span> <span class="toc-text">1、安装软件包</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2、初始化配置"><span class="toc-number">1.3.</span> <span class="toc-text">2、初始化配置</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3、初始化ldap配置"><span class="toc-number">1.4.</span> <span class="toc-text">3、初始化ldap配置</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#搭建kerberos服务端"><span class="toc-number"></span> <span class="toc-text">搭建kerberos服务端</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1、安装过程"><span class="toc-number">0.1.</span> <span class="toc-text">1、安装过程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2、修改配置文件"><span class="toc-number">0.2.</span> <span class="toc-text">2、修改配置文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3、生成访问ldap的服务密码文件"><span class="toc-number">0.3.</span> <span class="toc-text">3、生成访问ldap的服务密码文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4、创建kerberos数据库"><span class="toc-number">0.4.</span> <span class="toc-text">4、创建kerberos数据库</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5、启动kerberos服务"><span class="toc-number">0.5.</span> <span class="toc-text">5、启动kerberos服务</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6、测试创建kerberos用户"><span class="toc-number">0.6.</span> <span class="toc-text">6、测试创建kerberos用户</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7、问题"><span class="toc-number">0.7.</span> <span class="toc-text">7、问题</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#搭建kerberos客户端"><span class="toc-number">1.</span> <span class="toc-text">搭建kerberos客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1、安装kerberos客户端"><span class="toc-number">1.1.</span> <span class="toc-text">1、安装kerberos客户端</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2、修改配置文件-1"><span class="toc-number">1.2.</span> <span class="toc-text">2、修改配置文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3、生成keytab密钥表"><span class="toc-number">1.3.</span> <span class="toc-text">3、生成keytab密钥表</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4、kerberos用户授权主机"><span class="toc-number">1.4.</span> <span class="toc-text">4、kerberos用户授权主机</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#kerberos双活与主从"><span class="toc-number">2.</span> <span class="toc-text">kerberos双活与主从</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1、LDAP双主-主从部署"><span class="toc-number">2.1.</span> <span class="toc-text">1、LDAP双主+主从部署</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2、kerberos服务端配置"><span class="toc-number">2.2.</span> <span class="toc-text">2、kerberos服务端配置</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#参考文档："><span class="toc-number">2.3.</span> <span class="toc-text">参考文档：</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 2
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/ldap和kerberos安装/" >ldap</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/k8s-install/" >k8s-install</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
+    
+        <span class="sidebar-tag-name" data-tags="k8s"><span class="iconfont-archer">&#xe606;</span>k8s</span>
+    
+        <span class="sidebar-tag-name" data-tags="kubernetes"><span class="iconfont-archer">&#xe606;</span>kubernetes</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
+    
+        <span class="sidebar-category-name" data-categories="容器云"><span class="iconfont-archer">&#xe60a;</span>容器云</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Tobey"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
