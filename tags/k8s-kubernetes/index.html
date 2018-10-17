@@ -22,7 +22,7 @@
     <meta name="description" content="Tobey's personal blog">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>ops · Tobey&#39;s Notes</title>
+    <title>Tobey&#39;s Notes</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -203,23 +203,12 @@
 </head>
 
     
-        <body class="post-body">
-    
     
 <header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
-    
-    <div class="banner">
-            <div class="blog-title">
-                <a href="/" >Tobey&#39;s Notes</a>
-            </div>
-            <div class="post-title">
-                <a href="#" class="post-name">ops</a>
-            </div>
-    </div>
     
     <a class="home-link" href=/>Tobey's Notes</a>
 </header>
@@ -231,74 +220,24 @@
 
 
 
-
-height:50vh;
 ">
     
     <!-- 主页  -->
-    
-    
-    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
-            
-            ops
-            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
-            
-            <!-- 404 -->
-            
         </p>
         <!-- 文章页meta -->
-        
-            <div class="post-intros">
-                <!-- 文章页标签  -->
-                
-                    <div class= post-intro-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "ops">ops</a>
-    
-</div>
-                
-                
-                    <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">676</span>阅读时长: <span class="post-count reading-time">2 min</span></span>
-                    </div>
-                
-                <div class="post-intro-meta">
-                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                    <span class="post-intro-time">2018/10/17</span>
-                    
-                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
-                        <span class="iconfont-archer">&#xe602;</span>
-                        <span id="busuanzi_value_page_pv"></span>
-                    </span>
-                    
-                    <span class="shareWrapper">
-                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
-                        <span class="shareText">Share</span>
-                        <ul class="shareList">
-                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
-                                <div class="share-qrcode"></div>
-                            </li>
-                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
-                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
-                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
-                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
-                        </ul>
-                    </span>
-                </div>
-            </div>
         
     </div>
 </div>
@@ -399,93 +338,85 @@ height:50vh;
 </script>        
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <main class="main post-page">
-    <article class="article-entry">
-        <h2 id="运维标准化工作-md"><a href="#运维标准化工作-md" class="headerlink" title="运维标准化工作.md"></a>运维标准化工作.md</h2><h4 id="系统标准规范化"><a href="#系统标准规范化" class="headerlink" title="系统标准规范化"></a>系统标准规范化</h4><ul>
-<li>机器电源、网络冗余要求</li>
-<li>硬件BIOS配置、RAID初始化(根据物理机的用途，规范初始化硬件设置，提高性能和一致性)</li>
-<li>操作系统支持的版本(例如只支持CentOS7/CentOS6)</li>
-<li>系统初始化参数(ulimit.conf/sysctl.conf/resolve.conf,yum.repo等)</li>
-<li>基础运维组件安装配置（如heka、zabbix-agent等）<br><strong>【重要，不紧急】解决系统配置不统一的问题</strong></li>
-</ul>
-<h4 id="应用配置合理化"><a href="#应用配置合理化" class="headerlink" title="应用配置合理化"></a>应用配置合理化</h4><ul>
-<li>了解目前线上应用的使用情况及配置</li>
-<li>推进配置的改进以提高可靠性和性能<br><strong>解决线上配置保持最优状态的问题</strong></li>
-</ul>
-<h4 id="运维流程标准规范"><a href="#运维流程标准规范" class="headerlink" title="运维流程标准规范"></a>运维流程标准规范</h4><ul>
-<li>设备上架、下线、资产入库与回收流程</li>
-<li>事故处理规范</li>
-<li>申请机器的流程规范<br><strong>解决资产管理标准有标准流程的问题</strong></li>
-</ul>
-<h4 id="监控系统的完善"><a href="#监控系统的完善" class="headerlink" title="监控系统的完善"></a>监控系统的完善</h4><ul>
-<li>关键的基础设施、系统状态、业务状态电视墙展示</li>
-<li>处理不合理或者不到位的监控</li>
-<li>监控新系统调研或改进<br><strong>解决监控不到位、告警不及时、展示没重点、告警频繁没聚合的问题</strong></li>
-</ul>
-<h4 id="容量规划平台"><a href="#容量规划平台" class="headerlink" title="容量规划平台"></a>容量规划平台</h4><ul>
-<li>容量规范方案</li>
-<li>搭建自动化压测环境</li>
-<li>开发容量规范平台</li>
-<li>将压测数据注入压测平台生成性能指标数据<br><strong>解决线上容量及扩展不清楚、资产采购拍脑袋的问题</strong></li>
-</ul>
-<h4 id="数据备份"><a href="#数据备份" class="headerlink" title="数据备份"></a>数据备份</h4><ul>
-<li>统一规划、管理、分配用于备份数据的设备和空间。</li>
-<li>跟维护人员及业务部门确认数据的备份要求。</li>
-<li>运维相关平台及配置的备份</li>
-<li>分配资源给相关的负责人，并跟进相关负责人的业务数据备份情况。<br><strong>解决备份空间混用关键业务数据可能关键时候找不到备份的问题</strong></li>
-</ul>
-<h4 id="日志问题规范化"><a href="#日志问题规范化" class="headerlink" title="日志问题规范化"></a>日志问题规范化</h4><ul>
-<li>推进业务日志的轮转及保存路径统一</li>
-<li>推进业务日志的收集客户端版本及配置合理<br><strong>解决目前主机磁盘空间、CPU负载高、测试看不到日志需要上线过程中调试日志效率低的问题</strong></li>
-</ul>
-<h4 id="故障管理及应急预案"><a href="#故障管理及应急预案" class="headerlink" title="故障管理及应急预案"></a>故障管理及应急预案</h4><ul>
-<li>故障定位和快速恢复</li>
-<li>业务的架构和逻辑处理深入学习</li>
-<li>故障定位的及时响应，快速定位故障点，科学恢复</li>
-<li>对故障的等级进行评估和优化改进</li>
-<li>排查故障带来二次故障灾害</li>
-<li>定期进行应急演练<br><strong>解决定位故障慢，业务架构不熟悉的问题</strong></li>
-</ul>
-<h3 id="代码review"><a href="#代码review" class="headerlink" title="代码review"></a>代码review</h3>
-    </article>
-    <!-- license  -->
+            <main class="main index-page">
     
-        <div class="license-wrapper">
-            <p>原文作者：<a href="http://xiangyu123.github.io">Tobey</a>
-            <p>原文链接：<a href="http://xiangyu123.github.io/2018/10/17/ops/">http://xiangyu123.github.io/2018/10/17/ops/</a>
-            <p>发表日期：<a href="http://xiangyu123.github.io/2018/10/17/ops/">October 17th 2018, 11:49:05 am</a>
-            <p>更新日期：<a href="http://xiangyu123.github.io/2018/10/17/ops/">October 17th 2018, 11:49:21 am</a>
-            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2018/10/17/k8s-install/" >
+            
+                <span>k8s-install</span>
+        </a>
+        <div class="abstract-content">
+            1. 环境准备
+
+
+机器名
+资源配置
+操作系统
+角色
+IP
+
+
+
+
+k8s101
+2/cpu+2G/mem
+CentOS7.4-x86_64
+Master
+172.17.8.101
+
+
+k8s102
+2/cpu+2G/mem
+CentOS7.4-x86_64
+Node
+172.17.8.102
+
+
+k8s103
+2/cpu+2G/mem
+CentOS7.4-x86_64
+Node
+172.17.8.103
+
+
+
+2. 应用版本准备
+
+
+docker版本
+etcd版本
+CoreDNS版本
+kubernetes版本
+flannel版本
+
+
+
+
+docker-ce-18.03.1.ce-1.e...
         </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/17</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "k8s, kubernetes">k8s, kubernetes</a>
+    
+</div>
+            
+        </div>
+    </article>
     
     <!-- paginator  -->
-    <ul class="post-paginator">
-        <li class="next">
-            
-        </li>
-        <li class="previous">
-            
-                <div class="prevSlogan">Previous Post</div>
-                <a href= "/2018/10/17/k8s-install/" title= "k8s-install">
-                    <div class="prevTitle">k8s-install</div>
-                </a>
-            
-        </li>
-    </ul>
-    <!-- 评论插件 -->
-    <!-- 来必力City版安装代码 -->
-
-<!-- City版安装代码已完成 -->
     
-    
-    <!-- partial('_partial/comment/changyan') -->
-    <!--PC版-->
-
-
-    
-    
-
-    <!-- 评论 -->
 </main>
             <!-- profile -->
             
@@ -570,24 +501,6 @@ height:50vh;
 </footer>
     </div>
     <!-- toc -->
-    
-    <div class="toc-wrapper" style=
-    
-
-
-
-
-
-
-
-top:50vh;
-
-    >
-        <div class="toc-catalog">
-            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
-        </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#运维标准化工作-md"><span class="toc-number">1.</span> <span class="toc-text">运维标准化工作.md</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#系统标准规范化"><span class="toc-number">1.0.1.</span> <span class="toc-text">系统标准规范化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#应用配置合理化"><span class="toc-number">1.0.2.</span> <span class="toc-text">应用配置合理化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#运维流程标准规范"><span class="toc-number">1.0.3.</span> <span class="toc-text">运维流程标准规范</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#监控系统的完善"><span class="toc-number">1.0.4.</span> <span class="toc-text">监控系统的完善</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#容量规划平台"><span class="toc-number">1.0.5.</span> <span class="toc-text">容量规划平台</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#数据备份"><span class="toc-number">1.0.6.</span> <span class="toc-text">数据备份</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#日志问题规范化"><span class="toc-number">1.0.7.</span> <span class="toc-text">日志问题规范化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#故障管理及应急预案"><span class="toc-number">1.0.8.</span> <span class="toc-text">故障管理及应急预案</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码review"><span class="toc-number">1.1.</span> <span class="toc-text">代码review</span></a></li></ol></li></ol>
-    </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
     <div class="sidebar sidebar-hide">
@@ -717,8 +630,6 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
-    
-        <script src="/scripts/share.js" async></script>    
      
     </body>
 </html>
