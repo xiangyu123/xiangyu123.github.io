@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Tobey">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Tobey">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="Tobey's personal blog">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>openvswitch简介 · Tobey&#39;s Notes</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Tobey&#39;s Notes</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">openvswitch简介</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Tobey's Notes</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            openvswitch简介
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "ovs">ovs</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "openvswitch">openvswitch</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "sdn">sdn</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2.3k</span>阅读时长: <span class="post-count reading-time">10 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/10/19</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="Open-Vswitch简介"><a href="#Open-Vswitch简介" class="headerlink" title="Open Vswitch简介"></a>Open Vswitch简介</h2><hr>
+<h4 id="什么是OpenvSwitch"><a href="#什么是OpenvSwitch" class="headerlink" title="什么是OpenvSwitch"></a>什么是OpenvSwitch</h4><blockquote>
+<p>OpenvSwitch，简称OVS是一个虚拟交换软件，主要用于虚拟机VM环境，作为一个虚拟交换机，支持Xen/XenServer, KVM, and VirtualBox多种虚拟化技术。</p>
+</blockquote>
+<p>整个OVS代码用C写的。目前有以下功能：</p>
+<ul>
+<li>Standard 802.1Q VLAN model with trunk and access ports</li>
+<li>NIC bonding with or without LACP on upstream switch</li>
+<li>NetFlow, sFlow(R), and mirroring for increased visibility</li>
+<li>QoS (Quality of Service) configuration, plus policing</li>
+<li>GRE, GRE over IPSEC, VXLAN, and LISP tunneling</li>
+<li>802.1ag connectivity fault management</li>
+<li>OpenFlow 1.0 plus numerous extensions</li>
+<li>Transactional configuration database with C and Python bindings</li>
+<li>High-performance forwarding using a Linux kernel module</li>
+<li>IPv6 support</li>
+<li>STP support</li>
+</ul>
+<hr>
+<h4 id="OpenvSwitch-组成"><a href="#OpenvSwitch-组成" class="headerlink" title="OpenvSwitch 组成"></a>OpenvSwitch 组成</h4><ul>
+<li>ovs-vswitchd：守护程序，实现交换功能，和Linux内核兼容模块一起，实现基于流的交换flow-based switching</li>
+<li>ovsdb-server：轻量级的数据库服务，主要保存了整个OVS的配置信息，包括接口啊，交换内容，VLAN啊等等。ovs-vswitchd会根据数据库中的配置信息工作</li>
+<li>ovs-dpctl：一个工具，用来配置交换机内核模块，可以控制转发规则。</li>
+<li>ovs-vsctl：主要是获取或者更改ovs-vswitchd的配置信息，此工具操作的时候会更新ovsdb-server中的数据库</li>
+<li>ovs-appctl：主要是向OVS守护进程发送命令的，一般用不上</li>
+<li>ovsdbmonitor：GUI工具来显示ovsdb-server中数据信息</li>
+<li>ovs-controller：一个简单的OpenFlow控制器</li>
+<li>ovs-ofctl：用来控制OVS作为OpenFlow交换机工作时候的流表内容</li>
+</ul>
+<h4 id="ovs结构图"><a href="#ovs结构图" class="headerlink" title="ovs结构图"></a>ovs结构图</h4><p><img src="/2018/10/19/openvswitch-intro/ovs1.png" alt="image"></p>
+<h4 id="ovsdb-server"><a href="#ovsdb-server" class="headerlink" title="ovsdb-server"></a>ovsdb-server</h4><p><img src="/2018/10/19/openvswitch-intro/ovs2.png" alt="image"><br><img src="/2018/10/19/openvswitch-intro/ovs3.png" alt="image"></p>
+<h4 id="ovs数据处理流程"><a href="#ovs数据处理流程" class="headerlink" title="ovs数据处理流程"></a>ovs数据处理流程</h4><p><img src="/2018/10/19/openvswitch-intro/ovs4.png" alt="image"></p>
+<h4 id="流表的匹配"><a href="#流表的匹配" class="headerlink" title="流表的匹配"></a>流表的匹配</h4><p><img src="/2018/10/19/openvswitch-intro/ovs5.png" alt="image"></p>
+<blockquote>
+<p>收到数据包后，会交给datapath内核模块处理，当匹配到对应的datapath会直接输出，如果没有匹配到，会交给用户态的ovs-vswitchd查询flow，用户态处理后，会把处理完的数据包输出到正确的端口，并且设置新的datapath规则，后续数据包可以通过新的datapath规则实现快速转发。</p>
+</blockquote>
+<h4 id="ovs相关概念"><a href="#ovs相关概念" class="headerlink" title="ovs相关概念"></a>ovs相关概念</h4><ul>
+<li><h5 id="Packet"><a href="#Packet" class="headerlink" title="Packet"></a>Packet</h5><blockquote>
+<p>网络转发的最小数据单元，每个包都来自某个端口，最终会被发往一个或多个目标端口，转发数据包的过程就是网络的唯一功能。</p>
+</blockquote>
+</li>
+<li><h5 id="Bridge"><a href="#Bridge" class="headerlink" title="Bridge"></a>Bridge</h5><blockquote>
+<p>Open vSwitch中的网桥对应物理交换机，其功能是根据一定流规则，把从端口收到的数据包转发到另一个或多个端口。</p>
+</blockquote>
+</li>
+<li><h5 id="Port"><a href="#Port" class="headerlink" title="Port"></a>Port</h5><blockquote>
+<p>端口是收发数据包的单元。Open vSwitch中，每个端口都属于一个特定的网桥。端口收到的数据包会经过流规则的处理，发往其他端口；也会把其他端口来的数据包发送出去。Open vSwitch支持的端口有以下几种：</p>
+<ol>
+<li>Normal Port: 用户可以把操作系统中的网卡绑定到Open vSwitch上，Open vSwitch会生成一个普通端口处理这块网卡进出的数据包</li>
+<li>Internal Port: 当设置端口类型为internal，Open vSwitch会创建一快虚拟网卡，此端口收到的所有数据包都会交给这块网卡，网卡发出的包会通过这个端口交给Open vSwitch。<br>Note: 当Open vSwitch创建一个新网桥时，默认会创建一个与网桥同名的Internal Port</li>
+<li>Patch Port: 当机器中有多个Open vSwitch网桥时，可以使用Patch Port把两个网桥连起来。Patch Port总是成对出现，分别连接在两个网桥上，在两个网桥之间交换数据。</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<h5 id="Interface"><a href="#Interface" class="headerlink" title="Interface"></a>Interface</h5><blockquote>
+<p>接口是Open vSwitch与外部交换数据包的组件。一个接口就是操作系统的一块网卡，这块网卡可能是Open vSwitch生成的虚拟网卡，也可能是物理网卡挂载在Open vSwitch上，也可能是操作系统的虚拟网卡（TUN/TAP）挂载在Open vSwitch上</p>
+</blockquote>
+<h5 id="Flow"><a href="#Flow" class="headerlink" title="Flow"></a>Flow</h5><blockquote>
+<p>流定义了端口之间数据包的交换规则。每条流分为匹配和动作两部分，匹配部分选择哪些数据包需要可以通过这条流处理，动作决定这些匹配到的数据包如何转发。流描述了一个网桥上，端口到端口的转发规则。比如我可以定义这样一条流:</p>
+<ol>
+<li><p>当数据包来自端口A，则发往端口B</p>
+</li>
+<li><p>当数据包来自端口A，并且其源MAC是aa:aa:aa:aa:aa:aa，并且其拥有vlan tag为a，并且其源IP是a.a.a.a，并且其协议是TCP，其TCP源端口号为a，则修改其源IP为b.b.b.b，发往端口B</p>
+</li>
+</ol>
+</blockquote>
+<h5 id="Datapath"><a href="#Datapath" class="headerlink" title="Datapath"></a>Datapath</h5><blockquote>
+<p>Datapath是流的一个缓存，会把流的match结果cache起来，避免下一次流继续到用户空间进行flow match</p>
+</blockquote>
+<h5 id="flow-table"><a href="#flow-table" class="headerlink" title="flow table"></a>flow table</h5><blockquote>
+<p>每个 datapath都和一个“flowtable”关联，当 datapath接收到数据之后， OVS会在 flow table中查找可以匹配的 flow，执行对应的操作,例如转发数据到另外的端口</p>
+</blockquote>
+<h4 id="网桥的工作原理"><a href="#网桥的工作原理" class="headerlink" title="网桥的工作原理"></a>网桥的工作原理</h4><p>网桥处理包遵循以下几条规则</p>
+<ul>
+<li>在一个接口上接收到的包不会再往那个接口上发送此包</li>
+<li>每个接收到的包都要学习其源MAC地址</li>
+<li>如果数据包是多播或者广播包（通过2层MAC地址确定）则要向接收端口以外的所有端口转发，如果上层协议感兴趣，则还会递交上层处理</li>
+<li>如果数据包的地址不能再CAM表中找到，则向接收端口以外的其他端口转发</li>
+<li>如果CAM表中能找到，则转发给相应端口，如果发送和接收都是统一端口，则不发送</li>
+<li>网桥是以混杂模式工作</li>
+</ul>
+<h4 id="相关操作"><a href="#相关操作" class="headerlink" title="相关操作"></a>相关操作</h4><ul>
+<li><p>查看学习到的MAC地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-appctl fdb/show br0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建网桥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl add-br ovs-switch -- <span class="built_in">set</span> Bridge br0 fail-mode=secure</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建端口p0并配置其OpenFlow端口编号为100</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl add-port br0 p0 -- <span class="built_in">set</span> Interface p0 ofport_request=<span class="variable">$i</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置端口设备类型为internal</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl <span class="built_in">set</span> Interface p0 <span class="built_in">type</span>=internal</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看创建的结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s201 ~]# ovs-vsctl show</span><br><span class="line">aea2e0f0-9994-4703-9ff0-9ec12f3a1d50</span><br><span class="line">    Bridge &quot;br0&quot;</span><br><span class="line">        fail_mode: secure</span><br><span class="line">        Port &quot;p1&quot;</span><br><span class="line">            Interface &quot;p1&quot;</span><br><span class="line">        Port &quot;br0&quot;</span><br><span class="line">            Interface &quot;br0&quot;</span><br><span class="line">                type: internal</span><br><span class="line">        Port &quot;p3&quot;</span><br><span class="line">            Interface &quot;p3&quot;</span><br><span class="line">        Port &quot;p2&quot;</span><br><span class="line">            Interface &quot;p2&quot;</span><br><span class="line">        Port &quot;p4&quot;</span><br><span class="line">            Interface &quot;p4&quot;</span><br><span class="line">    ovs_version: &quot;2.0.0&quot;</span><br><span class="line">[root@k8s201 ~]#</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看所有的 flow table</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-ofctl dump-tables br0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看流表</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s201 ~]<span class="comment"># ovs-ofctl dump-flows br0</span></span><br><span class="line">NXST_FLOW reply (xid=0x4):</span><br><span class="line"> cookie=0x0, duration=7310.456s, table=0, n_packets=0, n_bytes=0, idle_age=7310, priority=0 actions=resubmit(,1)</span><br><span class="line"> cookie=0x0, duration=7357.2s, table=0, n_packets=0, n_bytes=0, idle_age=7357, dl_src=01:00:00:00:00:00/01:00:00:00:00:00 actions=drop</span><br><span class="line"> cookie=0x0, duration=7348.329s, table=0, n_packets=0, n_bytes=0, idle_age=7348, dl_dst=01:80:c2:00:00:00/ff:ff:ff:ff:ff:f0 actions=drop</span><br><span class="line"></span><br><span class="line">  Notes: dump-flows字段解释</span><br><span class="line">  </span><br><span class="line">      Cookie：流规则标识。</span><br><span class="line">      </span><br><span class="line">      duration：流表项创建持续的时间（单位是秒）。</span><br><span class="line">      </span><br><span class="line">      table：流表项所属的table编号。</span><br><span class="line">      </span><br><span class="line">      n_packets：此流表项匹配到的报文数。</span><br><span class="line">      </span><br><span class="line">      n_bytes：此流表项匹配到的字节数。</span><br><span class="line">      </span><br><span class="line">      idle_age：此流表项从最后一个匹配的报文到现在空闲的时间。</span><br><span class="line">      </span><br><span class="line">      hard_age：此流表项从最后一次被创建或修改到现在持续的时间。</span><br><span class="line">      </span><br><span class="line">      Priority：流表项的优先级，数字越大优先级越高，范围是：0~7。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除OpenFlow端口号为100的所有流表项</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-ofctl del-flows br0 <span class="string">"in_port=100"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>屏蔽广播包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-ofctl add-flow br0 <span class="string">"table=0, dl_src=01:00:00:00:00:00/01:00:00:00:00:00, actions=drop"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>开启stp支持</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl <span class="built_in">set</span> bridge br0 stp_enable=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>关闭stp</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl <span class="built_in">set</span> bridge br0 stp_enable=<span class="literal">false</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查询stp</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl get bridge br0 stp_enable</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置stp优先级</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs−vsctl <span class="built_in">set</span> bridge br0 other_config:stp-priority=0x7800</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置stp Cost</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs−vsctl <span class="built_in">set</span> port eth0 other_config:stp-path-cost=10</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>移除stp配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs−vsctl clear bridge br0 other_config</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置OpenFlow版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl <span class="built_in">set</span> bridge ovs-br protocols=OpenFlow12,OpenFlow13</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>移除openflow支持</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl clear bridge br0 protocols</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置接口的vlan编号</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl <span class="built_in">set</span> port p0 tag=30</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置接口为trunk</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl <span class="built_in">set</span> port p0 vlan=trunk</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置trunk允许通过的vlan</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl <span class="built_in">set</span> port p1 trunk=4,5,6</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置网桥的faild-mode</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl <span class="built_in">set</span>-fail-mode ovs-br secure</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调试一个数据包的规则</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s201 ~]<span class="comment"># ovs-appctl ofproto/trace br0 in_port=1,dl_src=00:00:00:00:00:01,dl_dst=00:00:00:00:00:02</span></span><br><span class="line">Flow: metadata=0,in_port=1,vlan_tci=0x0000,dl_src=00:00:00:00:00:01,dl_dst=00:00:00:00:00:02,dl_type=0x0000</span><br><span class="line">Rule: table=0 cookie=0 priority=0</span><br><span class="line">OpenFlow actions=resubmit(,1)</span><br><span class="line"></span><br><span class="line">	Resubmitted flow: unchanged</span><br><span class="line">	Resubmitted regs: reg0=0x0 reg1=0x0 reg2=0x0 reg3=0x0 reg4=0x0 reg5=0x0 reg6=0x0 reg7=0x0</span><br><span class="line">	Resubmitted  odp: drop</span><br><span class="line">	No match</span><br><span class="line"></span><br><span class="line">Final flow: unchanged</span><br><span class="line">Relevant fields: skb_priority=0,in_port=1,dl_src=00:00:00:00:00:00/01:00:00:00:00:00,dl_dst=00:00:00:00:00:00/ff:ff:ff:ff:ff:f0,dl_type=0x0000,nw_frag=no</span><br><span class="line">Datapath actions: drop</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看模块的log配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-appctl vlog/list</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置模块的日志级别</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-appctl vlog/<span class="built_in">set</span> dpif:console:dbg</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加flow规则(屏蔽某个ip)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-ofctl add-flow xenbr0 idle_timeout=0,dl_type=0x0800,nw_src=119.75.213.50,actions=drop</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>数据包重定向</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-ofctl add-flow xenbr0 idle_timeout=0,dl_type=0x0800,nw_proto=1,actions=output:4</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>更改源ip转发</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-ofctl add-flow xenbr0 idle_timeout=0,in_port=3,actions=mod_nw_src:211.68.52.32,normal</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看端口的统计信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-ofctl dump-ports br0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看有哪些网桥,哪些port,哪些interface</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">root@l-network-1:~<span class="comment"># ovs-vsctl list-br</span></span><br><span class="line">br-ex</span><br><span class="line">br-int</span><br><span class="line">br-tun</span><br><span class="line"></span><br><span class="line">root@l-network-1:~<span class="comment"># ovs-vsctl list-ports br-tun</span></span><br><span class="line">patch-int</span><br><span class="line">vxlan-ac1c0509</span><br><span class="line">vxlan-ac1c050d</span><br><span class="line">vxlan-ac1c051c</span><br><span class="line">vxlan-ac1c053f</span><br><span class="line"></span><br><span class="line">root@l-network-1:~<span class="comment"># ovs-vsctl list-ifaces br-tun</span></span><br><span class="line">patch-int</span><br><span class="line">vxlan-ac1c0509</span><br><span class="line">vxlan-ac1c050d</span><br><span class="line">vxlan-ac1c051c</span><br><span class="line">vxlan-ac1c053f</span><br><span class="line"><span class="comment"># iface与ports同名.</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看某个port,interface属于哪个bridge</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@l-network-1:~<span class="comment"># ovs-vsctl port-to-br vxlan-ac1c0509</span></span><br><span class="line">br-tun</span><br><span class="line">root@l-network-1:~<span class="comment"># ovs-vsctl iface-to-br vxlan-ac1c0509</span></span><br><span class="line">br-tun</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="流表常用字段"><a href="#流表常用字段" class="headerlink" title="流表常用字段"></a>流表常用字段</h4><p><img src="/2018/10/19/openvswitch-intro/ovs6.png" alt="image"><br><img src="/2018/10/19/openvswitch-intro/ovs7.png" alt="image"><br><img src="/2018/10/19/openvswitch-intro/ovs8.png" alt="image"><br><img src="/2018/10/19/openvswitch-intro/ovs9.png" alt="image"></p>
+<h4 id="常见actions"><a href="#常见actions" class="headerlink" title="常见actions"></a>常见actions</h4><p><img src="/2018/10/19/openvswitch-intro/ovs10.png" alt="image"><br><img src="/2018/10/19/openvswitch-intro/ovs11.png" alt="image"><br><img src="/2018/10/19/openvswitch-intro/ovs12.png" alt="image"><br><img src="/2018/10/19/openvswitch-intro/ovs13.png" alt="image"></p>
+<blockquote>
+<p>参考: <a href="http://fishcried.com/2016-02-09/openvswitch-ops-guide/" target="_blank" rel="noopener">http://fishcried.com/2016-02-09/openvswitch-ops-guide/</a><br>实验: <a href="https://vcpu.me/openvswitch/" target="_blank" rel="noopener">https://vcpu.me/openvswitch/</a></p>
+</blockquote>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://xiangyu123.github.io">Tobey</a>
+            <p>原文链接：<a href="http://xiangyu123.github.io/2018/10/19/openvswitch-intro/">http://xiangyu123.github.io/2018/10/19/openvswitch-intro/</a>
+            <p>发表日期：<a href="http://xiangyu123.github.io/2018/10/19/openvswitch-intro/">October 19th 2018, 11:48:27 pm</a>
+            <p>更新日期：<a href="http://xiangyu123.github.io/2018/10/19/openvswitch-intro/">October 20th 2018, 12:04:21 am</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/10/17/ldap_kerberos_install/" title= "ldap和kerberos安装">
+                    <div class="prevTitle">ldap和kerberos安装</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:xuzhigui1991@163.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/xiangyu123" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/example_qr.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Open-Vswitch简介"><span class="toc-number">1.</span> <span class="toc-text">Open Vswitch简介</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是OpenvSwitch"><span class="toc-number">1.0.1.</span> <span class="toc-text">什么是OpenvSwitch</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OpenvSwitch-组成"><span class="toc-number">1.0.2.</span> <span class="toc-text">OpenvSwitch 组成</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ovs结构图"><span class="toc-number">1.0.3.</span> <span class="toc-text">ovs结构图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ovsdb-server"><span class="toc-number">1.0.4.</span> <span class="toc-text">ovsdb-server</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ovs数据处理流程"><span class="toc-number">1.0.5.</span> <span class="toc-text">ovs数据处理流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#流表的匹配"><span class="toc-number">1.0.6.</span> <span class="toc-text">流表的匹配</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ovs相关概念"><span class="toc-number">1.0.7.</span> <span class="toc-text">ovs相关概念</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Packet"><span class="toc-number">1.0.7.1.</span> <span class="toc-text">Packet</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Bridge"><span class="toc-number">1.0.7.2.</span> <span class="toc-text">Bridge</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Port"><span class="toc-number">1.0.7.3.</span> <span class="toc-text">Port</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Interface"><span class="toc-number">1.0.7.4.</span> <span class="toc-text">Interface</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Flow"><span class="toc-number">1.0.7.5.</span> <span class="toc-text">Flow</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Datapath"><span class="toc-number">1.0.7.6.</span> <span class="toc-text">Datapath</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#flow-table"><span class="toc-number">1.0.7.7.</span> <span class="toc-text">flow table</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#网桥的工作原理"><span class="toc-number">1.0.8.</span> <span class="toc-text">网桥的工作原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#相关操作"><span class="toc-number">1.0.9.</span> <span class="toc-text">相关操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#流表常用字段"><span class="toc-number">1.0.10.</span> <span class="toc-text">流表常用字段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#常见actions"><span class="toc-number">1.0.11.</span> <span class="toc-text">常见actions</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 3
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/19</span><a class="archive-post-title" href= "/2018/10/19/openvswitch-intro/" >openvswitch简介</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/ldap_kerberos_install/" >ldap和kerberos安装</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/k8s-install/" >k8s-install</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="k8s"><span class="iconfont-archer">&#xe606;</span>k8s</span>
+    
+        <span class="sidebar-tag-name" data-tags="kubernetes"><span class="iconfont-archer">&#xe606;</span>kubernetes</span>
+    
+        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
+    
+        <span class="sidebar-tag-name" data-tags="ovs"><span class="iconfont-archer">&#xe606;</span>ovs</span>
+    
+        <span class="sidebar-tag-name" data-tags="openvswitch"><span class="iconfont-archer">&#xe606;</span>openvswitch</span>
+    
+        <span class="sidebar-tag-name" data-tags="sdn"><span class="iconfont-archer">&#xe606;</span>sdn</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="容器云"><span class="iconfont-archer">&#xe60a;</span>容器云</span>
+    
+        <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Tobey"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
