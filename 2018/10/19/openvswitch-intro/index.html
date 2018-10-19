@@ -441,25 +441,23 @@ height:50vh;
 <blockquote>
 <p>收到数据包后，会交给datapath内核模块处理，当匹配到对应的datapath会直接输出，如果没有匹配到，会交给用户态的ovs-vswitchd查询flow，用户态处理后，会把处理完的数据包输出到正确的端口，并且设置新的datapath规则，后续数据包可以通过新的datapath规则实现快速转发。</p>
 </blockquote>
-<h4 id="ovs相关概念"><a href="#ovs相关概念" class="headerlink" title="ovs相关概念"></a>ovs相关概念</h4><ul>
-<li><h5 id="Packet"><a href="#Packet" class="headerlink" title="Packet"></a>Packet</h5><blockquote>
+<h4 id="ovs相关概念"><a href="#ovs相关概念" class="headerlink" title="ovs相关概念"></a>ovs相关概念</h4><h5 id="Packet"><a href="#Packet" class="headerlink" title="Packet"></a>Packet</h5><blockquote>
 <p>网络转发的最小数据单元，每个包都来自某个端口，最终会被发往一个或多个目标端口，转发数据包的过程就是网络的唯一功能。</p>
 </blockquote>
-</li>
-<li><h5 id="Bridge"><a href="#Bridge" class="headerlink" title="Bridge"></a>Bridge</h5><blockquote>
+<h5 id="Bridge"><a href="#Bridge" class="headerlink" title="Bridge"></a>Bridge</h5><blockquote>
 <p>Open vSwitch中的网桥对应物理交换机，其功能是根据一定流规则，把从端口收到的数据包转发到另一个或多个端口。</p>
 </blockquote>
-</li>
-<li><h5 id="Port"><a href="#Port" class="headerlink" title="Port"></a>Port</h5><blockquote>
-<p>端口是收发数据包的单元。Open vSwitch中，每个端口都属于一个特定的网桥。端口收到的数据包会经过流规则的处理，发往其他端口；也会把其他端口来的数据包发送出去。Open vSwitch支持的端口有以下几种：</p>
-<ol>
+<h5 id="Port"><a href="#Port" class="headerlink" title="Port"></a>Port</h5><blockquote>
+<p>端口是收发数据包的单元。Open vSwitch中，每个端口都属于一个特定的网桥。端口收到的数据包会经过流规则的处理，发往其他端口；也会把其他端口来的数据包发送出去。</p>
+<blockquote>
+<p>Open vSwitch支持的端口有以下几种：</p>
+<ul>
 <li>Normal Port: 用户可以把操作系统中的网卡绑定到Open vSwitch上，Open vSwitch会生成一个普通端口处理这块网卡进出的数据包</li>
 <li>Internal Port: 当设置端口类型为internal，Open vSwitch会创建一快虚拟网卡，此端口收到的所有数据包都会交给这块网卡，网卡发出的包会通过这个端口交给Open vSwitch。<br>Note: 当Open vSwitch创建一个新网桥时，默认会创建一个与网桥同名的Internal Port</li>
 <li>Patch Port: 当机器中有多个Open vSwitch网桥时，可以使用Patch Port把两个网桥连起来。Patch Port总是成对出现，分别连接在两个网桥上，在两个网桥之间交换数据。</li>
-</ol>
-</blockquote>
-</li>
 </ul>
+</blockquote>
+</blockquote>
 <h5 id="Interface"><a href="#Interface" class="headerlink" title="Interface"></a>Interface</h5><blockquote>
 <p>接口是Open vSwitch与外部交换数据包的组件。一个接口就是操作系统的一块网卡，这块网卡可能是Open vSwitch生成的虚拟网卡，也可能是物理网卡挂载在Open vSwitch上，也可能是操作系统的虚拟网卡（TUN/TAP）挂载在Open vSwitch上</p>
 </blockquote>
@@ -592,7 +590,7 @@ height:50vh;
             <p>原文作者：<a href="http://xiangyu123.github.io">Tobey</a>
             <p>原文链接：<a href="http://xiangyu123.github.io/2018/10/19/openvswitch-intro/">http://xiangyu123.github.io/2018/10/19/openvswitch-intro/</a>
             <p>发表日期：<a href="http://xiangyu123.github.io/2018/10/19/openvswitch-intro/">October 19th 2018, 11:48:27 pm</a>
-            <p>更新日期：<a href="http://xiangyu123.github.io/2018/10/19/openvswitch-intro/">October 20th 2018, 12:04:21 am</a>
+            <p>更新日期：<a href="http://xiangyu123.github.io/2018/10/19/openvswitch-intro/">October 20th 2018, 12:15:52 am</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
