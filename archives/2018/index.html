@@ -346,6 +346,82 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2018/11/28/kvm/" >
+            
+                <span>虚拟化技术和kvm实践</span>
+        </a>
+        <div class="abstract-content">
+            虚拟化技术与KVM1. kvm与xen的比较
+
+
+对比项
+XEN
+KVM
+
+
+
+
+问世时间
+2003
+2007
+
+
+操作系统支持
+UNIX、Linux和Microsoft  Windows
+UNIX、Linux和Microsoft  Windows
+
+
+支持的虚拟化技术
+全虚拟化、半虚拟化
+全虚拟化
+
+
+动态迁移
+支持
+支持(基于共享存储)
+
+
+内核要求
+需要对内核打补丁
+内置在内核中
+
+
+新版升级方式
+需要编译内核
+无需编译内核，仅需要加载最新的ko模块
+
+
+性能
+接近宿主机
+稍弱一点
+
+
+管理工具对比
+QEMU-XEN、xm、virsh
+QEMU-KVM、Libvirt、virsh、...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/28</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "kvm">kvm</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2018/11/14/golang-interface-function/" >
             
                 <span>golang接口型函数详解</span>
@@ -655,9 +731,14 @@ docker-ce-18.03.1.ce-1.e...
     
     
     
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 4
+        Total : 5
         </div>
         <!-- search  -->
         
@@ -670,6 +751,11 @@ docker-ce-18.03.1.ce-1.e...
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/28</span><a class="archive-post-title" href= "/2018/11/28/kvm/" >虚拟化技术和kvm实践</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -700,17 +786,19 @@ docker-ce-18.03.1.ce-1.e...
     
         <span class="sidebar-tag-name" data-tags="go"><span class="iconfont-archer">&#xe606;</span>go</span>
     
-        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
-    
-        <span class="sidebar-tag-name" data-tags="k8s"><span class="iconfont-archer">&#xe606;</span>k8s</span>
-    
-        <span class="sidebar-tag-name" data-tags="kubernetes"><span class="iconfont-archer">&#xe606;</span>kubernetes</span>
+        <span class="sidebar-tag-name" data-tags="kvm"><span class="iconfont-archer">&#xe606;</span>kvm</span>
     
         <span class="sidebar-tag-name" data-tags="ovs"><span class="iconfont-archer">&#xe606;</span>ovs</span>
     
         <span class="sidebar-tag-name" data-tags="openvswitch"><span class="iconfont-archer">&#xe606;</span>openvswitch</span>
     
         <span class="sidebar-tag-name" data-tags="sdn"><span class="iconfont-archer">&#xe606;</span>sdn</span>
+    
+        <span class="sidebar-tag-name" data-tags="k8s"><span class="iconfont-archer">&#xe606;</span>k8s</span>
+    
+        <span class="sidebar-tag-name" data-tags="kubernetes"><span class="iconfont-archer">&#xe606;</span>kubernetes</span>
+    
+        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -747,9 +835,9 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="编程"><span class="iconfont-archer">&#xe60a;</span>编程</span>
     
-        <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
-    
         <span class="sidebar-category-name" data-categories="容器云"><span class="iconfont-archer">&#xe60a;</span>容器云</span>
+    
+        <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>

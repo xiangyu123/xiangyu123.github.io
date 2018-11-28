@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Tobey">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Tobey">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="Tobey's personal blog">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>虚拟化技术和kvm实践 · Tobey&#39;s Notes</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Tobey&#39;s Notes</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">虚拟化技术和kvm实践</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Tobey's Notes</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            虚拟化技术和kvm实践
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "kvm">kvm</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">1.8k</span>阅读时长: <span class="post-count reading-time">8 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/11/28</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="虚拟化技术与KVM"><a href="#虚拟化技术与KVM" class="headerlink" title="虚拟化技术与KVM"></a>虚拟化技术与KVM</h2><h4 id="1-kvm与xen的比较"><a href="#1-kvm与xen的比较" class="headerlink" title="1. kvm与xen的比较"></a>1. kvm与xen的比较</h4><table>
+<thead>
+<tr>
+<th style="text-align:left">对比项</th>
+<th style="text-align:left">XEN</th>
+<th style="text-align:left">KVM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">问世时间</td>
+<td style="text-align:left">2003</td>
+<td style="text-align:left">2007</td>
+</tr>
+<tr>
+<td style="text-align:left">操作系统支持</td>
+<td style="text-align:left">UNIX、Linux和Microsoft  Windows</td>
+<td style="text-align:left">UNIX、Linux和Microsoft  Windows</td>
+</tr>
+<tr>
+<td style="text-align:left">支持的虚拟化技术</td>
+<td style="text-align:left">全虚拟化、半虚拟化</td>
+<td style="text-align:left">全虚拟化</td>
+</tr>
+<tr>
+<td style="text-align:left">动态迁移</td>
+<td style="text-align:left">支持</td>
+<td style="text-align:left">支持(基于共享存储)</td>
+</tr>
+<tr>
+<td style="text-align:left">内核要求</td>
+<td style="text-align:left">需要对内核打补丁</td>
+<td style="text-align:left">内置在内核中</td>
+</tr>
+<tr>
+<td style="text-align:left">新版升级方式</td>
+<td style="text-align:left">需要编译内核</td>
+<td style="text-align:left">无需编译内核，仅需要加载最新的ko模块</td>
+</tr>
+<tr>
+<td style="text-align:left">性能</td>
+<td style="text-align:left">接近宿主机</td>
+<td style="text-align:left">稍弱一点</td>
+</tr>
+<tr>
+<td style="text-align:left">管理工具对比</td>
+<td style="text-align:left">QEMU-XEN、xm、virsh</td>
+<td style="text-align:left">QEMU-KVM、Libvirt、virsh、virt-manager</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2-kvm支持的image格式"><a href="#2-kvm支持的image格式" class="headerlink" title="2.kvm支持的image格式"></a>2.kvm支持的image格式</h4><ul>
+<li>vmdk(vmware) </li>
+<li>vhdx(Hyper-V)</li>
+<li>vdi(VirtualBox)</li>
+<li>rbd(ceph)</li>
+<li>raw</li>
+<li>qcow2</li>
+</ul>
+<h4 id="3-虚拟机格式的兼容性"><a href="#3-虚拟机格式的兼容性" class="headerlink" title="3.虚拟机格式的兼容性"></a>3.虚拟机格式的兼容性</h4><table>
+<thead>
+<tr>
+<th style="text-align:left">虚拟机</th>
+<th style="text-align:center">raw</th>
+<th style="text-align:center">qcow2</th>
+<th style="text-align:center">vmdk</th>
+<th style="text-align:center">vdi</th>
+<th style="text-align:center">vhd</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">XEN</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:left">KVM</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:left">VMware</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">√</td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<h4 id="4-qcow2和raw文件格式的对比"><a href="#4-qcow2和raw文件格式的对比" class="headerlink" title="4.qcow2和raw文件格式的对比"></a>4.qcow2和raw文件格式的对比</h4><blockquote>
+<ul>
+<li>raw格式由于裸的彻底，性能上来说的话还是不错的。目前来看，KVM和XEN默认的格式好像还是这个格式。因为其原始，有很多原生的特性，例如直接挂载也是一件简单的事情。 裸的好处还有就是简单，支持转换成其它格式的虚拟机镜像对裸露的它来说还是很简单的（如果其它格式需要转换，有时候还是需要它做为中间格式），空间使用来看，这个很像磁盘，使用多少就是多少（du -h看到的大小就是使用大小），但如果你要把整块磁盘都拿走的话得全盘拿了（copy镜像的时候），会比较消耗网络带宽和I/O</li>
+<li>qcow2现在比较主流的一种虚拟化镜像格式，经过一代的优化，目前qcow2的性能上接近raw裸格式的性能，且具有以下优点:<ol>
+<li>更小的存储空间，即使是不支持holes的文件系统也可以（这下du -h和ls -lh看到的就一样了）</li>
+<li>Copy-on-write support, where the image only represents changes made to an underlying disk image（这个特性SUN ZFS表现的淋漓尽致）</li>
+<li>支持多个snapshot，对历史snapshot进行管理</li>
+<li>支持zlib的磁盘压缩</li>
+<li>支持AES的加密<br>Notes: 建议使用qcow2格式</li>
+</ol>
+</li>
+</ul>
+</blockquote>
+<h4 id="5-kvm安装-基于centos7-5"><a href="#5-kvm安装-基于centos7-5" class="headerlink" title="5. kvm安装(基于centos7.5)"></a>5. kvm安装(基于centos7.5)</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s201 ~]<span class="comment"># yum -y install qemu-kvm-tools qemu-kvm.x86_64 libvirt-daemon-kvm.x86_64 virt-install</span></span><br></pre></td></tr></table></figure>
+<h4 id="6-启动kvm"><a href="#6-启动kvm" class="headerlink" title="6. 启动kvm"></a>6. 启动kvm</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s201 ~]<span class="comment"># systemctl start libvirtd</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># systemctl enable libvirtd</span></span><br></pre></td></tr></table></figure>
+<h4 id="7-创建image硬盘文件"><a href="#7-创建image硬盘文件" class="headerlink" title="7. 创建image硬盘文件"></a>7. 创建image硬盘文件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s201 ~]<span class="comment"># qemu-img create -f qcow2 -o size=20Gb kvm_disk1.img</span></span><br></pre></td></tr></table></figure>
+<h4 id="8-查看支持的os-variant"><a href="#8-查看支持的os-variant" class="headerlink" title="8. 查看支持的os-variant"></a>8. 查看支持的os-variant</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s201 ~]<span class="comment"># osinfo-query os</span></span><br></pre></td></tr></table></figure>
+<h4 id="9-安装并配置openvswitch"><a href="#9-安装并配置openvswitch" class="headerlink" title="9.安装并配置openvswitch"></a>9.安装并配置openvswitch</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装openvswitch</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># yum install openvswitch</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#固定ip</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># vim /etc/sysconfig/network-scripts/ifcfg-ovsbr0</span></span><br><span class="line">DEVICE=ovsbr0</span><br><span class="line">ONBOOT=yes</span><br><span class="line">DEVICETYPE=ovs</span><br><span class="line">TYPE=OVSBridge</span><br><span class="line">BOOTPROTO=static</span><br><span class="line">IPADDR=192.168.100.1</span><br><span class="line">NETMASK=255.255.255.0</span><br><span class="line">HOTPLUG=no</span><br><span class="line">ZONE=trusted</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义ovs网络类型，保持为ovsbr0.xml</span></span><br><span class="line">&lt;network&gt;</span><br><span class="line">  &lt;name&gt;ovsbr0&lt;/name&gt;</span><br><span class="line">  &lt;forward mode=<span class="string">'bridge'</span>/&gt;</span><br><span class="line">  &lt;bridge name=<span class="string">'ovsbr0'</span>/&gt;</span><br><span class="line">  &lt;virtualport <span class="built_in">type</span>=<span class="string">'openvswitch'</span>/&gt;</span><br><span class="line">&lt;/network&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">#注册网络类型到kvm</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh net-destroy default</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh net-autostart default --disable</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh net-define ovsbr0.xml</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh net-start ovsbr0</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh net-autostart ovsbr0</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh net-list</span></span><br><span class="line"> Name                 State      Autostart     Persistent</span><br><span class="line">----------------------------------------------------------</span><br><span class="line"> ovsbr0               active     yes           yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置NAT</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># sysctl -w net.ipv4.ip_forward=1</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># echo "net.ipv4.ip_forward=1" &gt;&gt; /etc/sysctl.conf</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># firewall-cmd --zone=trusted --add-interface=ovsbr0</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># firewall-cmd --zone=public --add-masquerade</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># firewall-cmd --zone=public --add-masquerade --permanent</span></span><br></pre></td></tr></table></figure>
+<h4 id="9-安装Guest"><a href="#9-安装Guest" class="headerlink" title="9. 安装Guest"></a>9. 安装Guest</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">     <span class="comment">########### 使用使用iso来安装 ###########     </span></span><br><span class="line">     <span class="comment"># virt-install \     </span></span><br><span class="line">      --name=centos5 \     </span><br><span class="line">      --os-variant=RHEL5 \     </span><br><span class="line">      --ram=512 \     </span><br><span class="line">      --vcpus=1 \     </span><br><span class="line">      --disk path=/opt/vms/centos63-webtest.img,format=qcow2,size=7,bus=virtio \     </span><br><span class="line">      --accelerate \     </span><br><span class="line">      --cdrom /data/iso/CentOS5.iso \     </span><br><span class="line">      --vnc --vncport=5910 \     </span><br><span class="line">      --vnclisten=0.0.0.0 \     </span><br><span class="line">      --network bridge=br0,model=virtio \     </span><br><span class="line">      --noautoconsole     </span><br><span class="line">   </span><br><span class="line">   </span><br><span class="line">   </span><br><span class="line">     <span class="comment">######### 从http中启动，使用ks安装 #########     </span></span><br><span class="line">   </span><br><span class="line">     <span class="comment"># virt-install \     </span></span><br><span class="line">     --name=centos63-webtest \     </span><br><span class="line">     --os-variant=RHEL6 \     </span><br><span class="line">     --ram=4096 \     </span><br><span class="line">     --vcpus=4 \     </span><br><span class="line">     --virt-type kvm  \     </span><br><span class="line">     --disk path=/opt/vms/centos63-webtest.img,format=qcow2,size=7,bus=virtio \     </span><br><span class="line">     --accelerate  \     </span><br><span class="line">     --location http://192.168.130.4/centos63 \     </span><br><span class="line">     --extra-args <span class="string">"linux ip=192.168.73.22 netmask=255.255.255.224 gateway=192.168.73.1 ks=http://192.168.130.4/ks/xen63.ks"</span>\     </span><br><span class="line">     --vnc --vncport=5910 \     </span><br><span class="line">     --vnclisten=0.0.0.0 \     </span><br><span class="line">     --network bridge=br0,model=virtio \     </span><br><span class="line">     --force \ </span><br><span class="line">     --noautoconsole     </span><br><span class="line">   </span><br><span class="line">   </span><br><span class="line">     <span class="comment">########## 从http安装，使用ks, 双网卡, 启用console ########     </span></span><br><span class="line">     <span class="comment"># virt-install \     </span></span><br><span class="line">     --name=centos63-webtest \     </span><br><span class="line">     --os-variant=RHEL6 \     </span><br><span class="line">     --ram=4096 \     </span><br><span class="line">     --vcpus=4 \     </span><br><span class="line">     --virt-type kvm  \     </span><br><span class="line">     --disk path=/opt/vms/centos63-webtest.img,format=qcow2,size=7,bus=virtio \     </span><br><span class="line">     --accelerate  \   </span><br><span class="line">     --location http://111.205.130.4/centos63 \     </span><br><span class="line">     --extra-args <span class="string">"linux ip=59.151.73.22 netmask=255.255.255.224 gateway=59.151.73.1 ks=http://111.205.130.4/ks/xen63.ks console=ttyS0  serial"</span>     </span><br><span class="line">     --vnc --vncport=5910 --vnclisten=0.0.0.0 \   </span><br><span class="line">    --network bridge=br0,model=virtio \     </span><br><span class="line">    --network bridge=br1,model=virtio \     </span><br><span class="line">    --force \     </span><br><span class="line">    --noautoconsole    </span><br><span class="line"></span><br><span class="line">--nographics --extra-args=<span class="string">"text console=tty0 console=ttyS0,115200"</span></span><br></pre></td></tr></table></figure>
+<h4 id="9-虚拟机相关操作命令"><a href="#9-虚拟机相关操作命令" class="headerlink" title="9. 虚拟机相关操作命令"></a>9. 虚拟机相关操作命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s201 ~]<span class="comment"># qemu-img info kvm_disk1.img #查看磁盘格式</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh list --all #查看所有虚拟机状况</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh start guest1 #启动名为guest1的虚拟机</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh shutdown guest1 #关闭名为guest1的虚拟机</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh destroy guest1 #强制关机</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh create /etc/libvirt/qemu/wintest01.xml #通过已定义的xml文件创建虚拟机</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh autostart guest1 #设置自动启动</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh dumpxml wintest01 #导出虚拟机配置</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh undefine wintest01 #删除虚拟机配置，destroy后彻底删除虚拟机</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh define /etc/libvirt/qemu/wintest01.xml #重新定义虚拟机</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh edit wintest01 #编辑虚拟机配置文件</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh suspend wintest01 #挂起虚拟机</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh resume wintest01 #恢复挂起的虚拟机</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virt-clone -o centos63_webtest -n centos63_webtest2 -f /opt/vms/centos_webtest2.img #克隆虚拟机, 使用原虚拟机centos63_webtest克隆为centos63_webtest2,且磁盘位置放在/opt/vms/centos_webtest2.img</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># qemu-img convert -f raw -O qcow2 centos63-119.22.raw  centos63-119.22.img #转换格式</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh snapshot-create centos63-119 #为这个虚拟机创建快照</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># qemu-img info   centos63-119 #查看虚拟机快照信息</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh snapshot-revert centos63-119.22 1410341560 #恢复快照，需要在虚拟机关机状况下</span></span><br><span class="line"></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh snapshot-delete centos63-119 #删除快照</span></span><br></pre></td></tr></table></figure>
+<h4 id="10-添加虚拟机网卡"><a href="#10-添加虚拟机网卡" class="headerlink" title="10. 添加虚拟机网卡"></a>10. 添加虚拟机网卡</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s201 ~]<span class="comment"># virsh attach-interface centos63-119 --type bridge --source br1 --model virtio</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># cd /etc/libvirt/qemu</span></span><br><span class="line">[root@k8s201 qemu]<span class="comment"># virsh dumpxml centos63-119 &gt; centos63-119.xml</span></span><br></pre></td></tr></table></figure>
+<h4 id="11-硬盘扩容"><a href="#11-硬盘扩容" class="headerlink" title="11. 硬盘扩容"></a>11. 硬盘扩容</h4><ol>
+<li><p>分区是lvm格式 这种很简单，添加一块磁盘，lvm扩容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s201 ~]<span class="comment"># virt-img create -f qcow2 10G.img 10G</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh attach-disk centos63-119 10G.img vdb</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># cd /etc/libvirt/qemu</span></span><br><span class="line">[root@k8s201 qemu]<span class="comment"># virsh dumpxml centos63-119 &gt; centos63-119.xml</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 接下来就是走LVM扩容的流程了</span></span><br><span class="line"><span class="comment"># 参考 http://www.cnblogs.com/cmsd/p/3964118.html</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分区不是lvm格式，该分区不是扩展分区, 需要关机离线扩展</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 新建一个磁盘，大于原来的容量，比如原来是40G，你想对某个分区扩容20G那么</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># qemu-img create -f qcow2 60G.img 60G</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 备份原来的磁盘，以防三长两短</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># cp centos63-119.img centos63-119.img.bak</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看原来的磁盘决定扩容哪一个分区</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># yum -y install libguestfs-tools</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virt-filesystems --partitions --long -a centos63-119.img</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virt-df centos63-119.img</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 扩容GuestOS的sda2</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virt-resize --expand /dev/sda2 centos63-119.27.img 60G.img</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用新磁盘启动</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># mv 60G.img centos63-119.img</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh start centos63-119</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在线迁移(需要使用共享存储)</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh migrate centos63-119.27 --live qemu+ssh://192.168.119.11:9741/system –unsafe</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除虚拟机</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh destroy clone1</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># virsh undefine clone1</span></span><br><span class="line">[root@k8s201 ~]<span class="comment"># rm -f /data/clone1.img</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 虚拟机停机迁移</span></span><br><span class="line">[root@k8s202 ~]<span class="comment"># virsh shutdown test02</span></span><br><span class="line">[root@k8s202 ~]<span class="comment"># virsh dumpxml test02 &gt; test02.xml</span></span><br><span class="line">[root@k8s202 ~]<span class="comment"># virsh domblklist test02 #查看磁盘位置</span></span><br><span class="line">[root@k8s202 ~]<span class="comment"># rsync -av /data/test02.qcow2  server02:/data/test02.qcow2</span></span><br><span class="line">[root@k8s202 ~]<span class="comment"># rsync -av  test02.xml server02:test02.xml</span></span><br><span class="line">[root@k8s202 ~]<span class="comment"># #在server02上操作</span></span><br><span class="line">[root@k8s202 ~]<span class="comment"># virsh define test02.xml</span></span><br><span class="line">[root@k8s202 ~]<span class="comment"># virsh start test02</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://xiangyu123.github.io">Tobey</a>
+            <p>原文链接：<a href="http://xiangyu123.github.io/2018/11/28/kvm/">http://xiangyu123.github.io/2018/11/28/kvm/</a>
+            <p>发表日期：<a href="http://xiangyu123.github.io/2018/11/28/kvm/">November 28th 2018, 4:29:51 pm</a>
+            <p>更新日期：<a href="http://xiangyu123.github.io/2018/11/28/kvm/">November 28th 2018, 5:31:51 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/11/14/golang-interface-function/" title= "golang接口型函数详解">
+                    <div class="prevTitle">golang接口型函数详解</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:xuzhigui1991@163.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/xiangyu123" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/example_qr.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#虚拟化技术与KVM"><span class="toc-number">1.</span> <span class="toc-text">虚拟化技术与KVM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-kvm与xen的比较"><span class="toc-number">1.0.1.</span> <span class="toc-text">1. kvm与xen的比较</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-kvm支持的image格式"><span class="toc-number">1.0.2.</span> <span class="toc-text">2.kvm支持的image格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-虚拟机格式的兼容性"><span class="toc-number">1.0.3.</span> <span class="toc-text">3.虚拟机格式的兼容性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-qcow2和raw文件格式的对比"><span class="toc-number">1.0.4.</span> <span class="toc-text">4.qcow2和raw文件格式的对比</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-kvm安装-基于centos7-5"><span class="toc-number">1.0.5.</span> <span class="toc-text">5. kvm安装(基于centos7.5)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-启动kvm"><span class="toc-number">1.0.6.</span> <span class="toc-text">6. 启动kvm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-创建image硬盘文件"><span class="toc-number">1.0.7.</span> <span class="toc-text">7. 创建image硬盘文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-查看支持的os-variant"><span class="toc-number">1.0.8.</span> <span class="toc-text">8. 查看支持的os-variant</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-安装并配置openvswitch"><span class="toc-number">1.0.9.</span> <span class="toc-text">9.安装并配置openvswitch</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-安装Guest"><span class="toc-number">1.0.10.</span> <span class="toc-text">9. 安装Guest</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-虚拟机相关操作命令"><span class="toc-number">1.0.11.</span> <span class="toc-text">9. 虚拟机相关操作命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-添加虚拟机网卡"><span class="toc-number">1.0.12.</span> <span class="toc-text">10. 添加虚拟机网卡</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-硬盘扩容"><span class="toc-number">1.0.13.</span> <span class="toc-text">11. 硬盘扩容</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 5
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/28</span><a class="archive-post-title" href= "/2018/11/28/kvm/" >虚拟化技术和kvm实践</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/14</span><a class="archive-post-title" href= "/2018/11/14/golang-interface-function/" >golang接口型函数详解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/19</span><a class="archive-post-title" href= "/2018/10/19/openvswitch-intro/" >openvswitch简介</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/ldap_kerberos_install/" >ldap和kerberos安装</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/k8s-install/" >k8s-install</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="golang"><span class="iconfont-archer">&#xe606;</span>golang</span>
+    
+        <span class="sidebar-tag-name" data-tags="go"><span class="iconfont-archer">&#xe606;</span>go</span>
+    
+        <span class="sidebar-tag-name" data-tags="kvm"><span class="iconfont-archer">&#xe606;</span>kvm</span>
+    
+        <span class="sidebar-tag-name" data-tags="ovs"><span class="iconfont-archer">&#xe606;</span>ovs</span>
+    
+        <span class="sidebar-tag-name" data-tags="openvswitch"><span class="iconfont-archer">&#xe606;</span>openvswitch</span>
+    
+        <span class="sidebar-tag-name" data-tags="sdn"><span class="iconfont-archer">&#xe606;</span>sdn</span>
+    
+        <span class="sidebar-tag-name" data-tags="k8s"><span class="iconfont-archer">&#xe606;</span>k8s</span>
+    
+        <span class="sidebar-tag-name" data-tags="kubernetes"><span class="iconfont-archer">&#xe606;</span>kubernetes</span>
+    
+        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="编程"><span class="iconfont-archer">&#xe60a;</span>编程</span>
+    
+        <span class="sidebar-category-name" data-categories="容器云"><span class="iconfont-archer">&#xe60a;</span>容器云</span>
+    
+        <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Tobey"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

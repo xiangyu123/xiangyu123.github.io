@@ -346,145 +346,70 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/19/openvswitch-intro/" >
+        <a class="abstract-title" href = "/2018/11/28/kvm/" >
             
-                <span>openvswitch简介</span>
+                <span>虚拟化技术和kvm实践</span>
         </a>
         <div class="abstract-content">
-            Open Vswitch简介
-什么是OpenvSwitch
-OpenvSwitch，简称OVS是一个虚拟交换软件，主要用于虚拟机VM环境，作为一个虚拟交换机，支持Xen/XenServer, KVM, and VirtualBox多种虚拟化技术。
+            虚拟化技术与KVM1. kvm与xen的比较
 
-整个OVS代码用C写的。目前有以下功能：
 
-Standard 802.1Q VLAN model with trunk and access ports
-NIC bonding with or without LACP on upstream switch
-NetFlow, sFlow(R), and mirroring for increa...
+对比项
+XEN
+KVM
+
+
+
+
+问世时间
+2003
+2007
+
+
+操作系统支持
+UNIX、Linux和Microsoft  Windows
+UNIX、Linux和Microsoft  Windows
+
+
+支持的虚拟化技术
+全虚拟化、半虚拟化
+全虚拟化
+
+
+动态迁移
+支持
+支持(基于共享存储)
+
+
+内核要求
+需要对内核打补丁
+内置在内核中
+
+
+新版升级方式
+需要编译内核
+无需编译内核，仅需要加载最新的ko模块
+
+
+性能
+接近宿主机
+稍弱一点
+
+
+管理工具对比
+QEMU-XEN、xm、virsh
+QEMU-KVM、Libvirt、virsh、...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/19</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/28</span>
             </div>
             <!-- tags  -->
             
             <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "ovs">ovs</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "openvswitch">openvswitch</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "sdn">sdn</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/17/ldap_kerberos_install/" >
-            
-                <span>ldap和kerberos安装</span>
-        </a>
-        <div class="abstract-content">
-            OpenLdap搭建
-LDAP是一款轻量级目录访问协议（Lightweight Directory Access Protocol，简称LDAP），属于开源集中账号管理架构的实现
-
-1、OpenLdap简介&nbsp;&nbsp;&nbsp;&nbsp;OpenLDAP目录中的信息是以树状的层次结构来存储数据(（这很类同于DNS），最顶  层即根部称作“基准DN”，形如“dc=mydomain,dc=org”或者“o=mydomain.org”，前一种方式更为灵活也是Windows AD中使用的方式。  
-&nbsp;&nbsp;&nbsp;&nbsp;在根目录的下面有很多的文件和目录，...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/17</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "ldap">ldap</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/17/k8s-install/" >
-            
-                <span>k8s-install</span>
-        </a>
-        <div class="abstract-content">
-            1. 环境准备
-
-
-机器名
-资源配置
-操作系统
-角色
-IP
-
-
-
-
-k8s101
-2/cpu+2G/mem
-CentOS7.4-x86_64
-Master
-172.17.8.101
-
-
-k8s102
-2/cpu+2G/mem
-CentOS7.4-x86_64
-Node
-172.17.8.102
-
-
-k8s103
-2/cpu+2G/mem
-CentOS7.4-x86_64
-Node
-172.17.8.103
-
-
-
-2. 应用版本准备
-
-
-docker版本
-etcd版本
-CoreDNS版本
-kubernetes版本
-flannel版本
-
-
-
-
-docker-ce-18.03.1.ce-1.e...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/17</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "k8s">k8s</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "kubernetes">kubernetes</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "kvm">kvm</a>
     
 </div>
             
