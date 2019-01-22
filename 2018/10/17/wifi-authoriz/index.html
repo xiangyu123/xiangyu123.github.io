@@ -272,7 +272,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">250</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">265</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -411,7 +411,7 @@ height:50vh;
 <li>authenticator使用EAP协议发送Request,Identify报文(#356)，要求STA发送用户名(仅要求发送用户名,密码在后面发送)</li>
 <li>STA针对authenticator的Request,Identify报文(#356)回复Response,Identify的报文(#356)，用户名为xuzg，如图<br><img src="/2018/10/17/wifi-authoriz/wifi2.png" alt="image"></li>
 <li>authenticator以EAP Over RADIUS的报文格式将EAP-Response/Identity发送给认证服务器Radius,并且带上相关的RADIUS的属性(#11403)<br><img src="/2018/10/17/wifi-authoriz/wifi3.png" alt="image"></li>
-<li>Radius收到客户端发来的EAP-Response/Identity，根据配置确定使用EAP-PEAP认证，并向AP发送RADIUS- Access-Challenge报文，里面含有Radius发送给客户端的EAP-Request/Peap/Start的报文，表示希望开始进行 EAP-PEAP的认证(#11404)<br><img src="/2018/10/17/wifi-authoriz/wifi4.png" alt="image"></li>
+<li>Radius收到客户端发来的EAP-Response/Identity，根据配置确定使用EAP-PEAP认证，并向AP发送RADIUS- Access-Challenge报文，里面含有Radius发送给客户端的EAP-Request/Peap/Start的报文，表示希望开始进行 EAP-PEAP的认证(#11404)<br><img src="/2018/10/17/wifi-authoriz/wifi4.png" alt="image"><br>AP设备将EAP-Request/PEAP/Start发送给认证客户端。<br><img src="/2018/10/17/wifi-authoriz/wifi5.png" alt="image"></li>
 </ol>
 </blockquote>
 
@@ -422,7 +422,7 @@ height:50vh;
             <p>原文作者：<a href="http://xiangyu123.github.io">Tobey</a>
             <p>原文链接：<a href="http://xiangyu123.github.io/2018/10/17/wifi-authoriz/">http://xiangyu123.github.io/2018/10/17/wifi-authoriz/</a>
             <p>发表日期：<a href="http://xiangyu123.github.io/2018/10/17/wifi-authoriz/">October 17th 2018, 6:22:22 pm</a>
-            <p>更新日期：<a href="http://xiangyu123.github.io/2018/10/17/wifi-authoriz/">December 6th 2018, 5:02:25 pm</a>
+            <p>更新日期：<a href="http://xiangyu123.github.io/2018/10/17/wifi-authoriz/">December 6th 2018, 5:06:26 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -677,11 +677,13 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="kvm"><span class="iconfont-archer">&#xe606;</span>kvm</span>
-    
         <span class="sidebar-tag-name" data-tags="golang"><span class="iconfont-archer">&#xe606;</span>golang</span>
     
         <span class="sidebar-tag-name" data-tags="go"><span class="iconfont-archer">&#xe606;</span>go</span>
+    
+        <span class="sidebar-tag-name" data-tags="kvm"><span class="iconfont-archer">&#xe606;</span>kvm</span>
+    
+        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
     
         <span class="sidebar-tag-name" data-tags="k8s"><span class="iconfont-archer">&#xe606;</span>k8s</span>
     
@@ -692,8 +694,6 @@ top:50vh;
         <span class="sidebar-tag-name" data-tags="openvswitch"><span class="iconfont-archer">&#xe606;</span>openvswitch</span>
     
         <span class="sidebar-tag-name" data-tags="sdn"><span class="iconfont-archer">&#xe606;</span>sdn</span>
-    
-        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
     
         <span class="sidebar-tag-name" data-tags="network"><span class="iconfont-archer">&#xe606;</span>network</span>
     
@@ -732,9 +732,9 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="编程"><span class="iconfont-archer">&#xe60a;</span>编程</span>
     
-        <span class="sidebar-category-name" data-categories="容器云"><span class="iconfont-archer">&#xe60a;</span>容器云</span>
-    
         <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
+    
+        <span class="sidebar-category-name" data-categories="容器云"><span class="iconfont-archer">&#xe60a;</span>容器云</span>
     
         <span class="sidebar-category-name" data-categories="wireless"><span class="iconfont-archer">&#xe60a;</span>wireless</span>
     
