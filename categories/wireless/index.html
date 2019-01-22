@@ -346,70 +346,29 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/28/kvm/" >
+        <a class="abstract-title" href = "/2018/10/17/wifi-authoriz/" >
             
-                <span>虚拟化技术和kvm实践</span>
+                <span>802.1x(EAP-PEAP | EAP-TLS)认证过程</span>
         </a>
         <div class="abstract-content">
-            虚拟化技术与KVM1. kvm与xen的比较
+            802.1x认证过程分析认证过程详见如下图:
+过滤器 (eapol &amp;&amp; eth.addr == 80:e6:50:21:90:b0 &amp;&amp; eth.addr == 80:f6:2e:53:79:00) or bootp
 
 
-对比项
-XEN
-KVM
+客户端抓包命令 tcpdump -G 3600 -n (ether proto 0x888e or (port 67 or port 68) or icmp) -w %Y%m%d_%H%M.cap
 
-
-
-
-问世时间
-2003
-2007
-
-
-操作系统支持
-UNIX、Linux和Microsoft  Windows
-UNIX、Linux和Microsoft  Windows
-
-
-支持的虚拟化技术
-全虚拟化、半虚拟化
-全虚拟化
-
-
-动态迁移
-支持
-支持(基于共享存储)
-
-
-内核要求
-需要对内核打补丁
-内置在内核中
-
-
-新版升级方式
-需要编译内核
-无需编译内核，仅需要加载最新的ko模块
-
-
-性能
-接近宿主机
-稍弱一点
-
-
-管理工具对比
-QEMU-XEN、xm、virsh
-QEMU-KVM、Libvirt、virsh、...
+客户端(STA)主动发起EAPOL(eap over lan)的start报文(#355)，告诉authenticator(ac),开始认...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/28</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/17</span>
             </div>
             <!-- tags  -->
             
             <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "kvm">kvm</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "network">network</a>
     
 </div>
             

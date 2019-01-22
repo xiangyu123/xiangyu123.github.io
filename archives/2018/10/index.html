@@ -420,6 +420,41 @@ LDAP是一款轻量级目录访问协议（Lightweight Directory Access Protocol
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2018/10/17/wifi-authoriz/" >
+            
+                <span>802.1x(EAP-PEAP | EAP-TLS)认证过程</span>
+        </a>
+        <div class="abstract-content">
+            802.1x认证过程分析认证过程详见如下图:
+过滤器 (eapol &amp;&amp; eth.addr == 80:e6:50:21:90:b0 &amp;&amp; eth.addr == 80:f6:2e:53:79:00) or bootp
+
+
+客户端抓包命令 tcpdump -G 3600 -n (ether proto 0x888e or (port 67 or port 68) or icmp) -w %Y%m%d_%H%M.cap
+
+客户端(STA)主动发起EAPOL(eap over lan)的start报文(#355)，告诉authenticator(ac),开始认...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/17</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "network">network</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2018/10/17/k8s-install/" >
             
                 <span>k8s-install</span>
@@ -635,9 +670,16 @@ docker-ce-18.03.1.ce-1.e...
     
     
     
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 5
+        Total : 6
         </div>
         <!-- search  -->
         
@@ -668,6 +710,11 @@ docker-ce-18.03.1.ce-1.e...
     
     
         <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/wifi-authoriz/" >802.1x(EAP-PEAP | EAP-TLS)认证过程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
             <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/ldap_kerberos_install/" >ldap和kerberos安装</a>
         </li>
     
@@ -681,6 +728,8 @@ docker-ce-18.03.1.ce-1.e...
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
+        <span class="sidebar-tag-name" data-tags="kvm"><span class="iconfont-archer">&#xe606;</span>kvm</span>
+    
         <span class="sidebar-tag-name" data-tags="golang"><span class="iconfont-archer">&#xe606;</span>golang</span>
     
         <span class="sidebar-tag-name" data-tags="go"><span class="iconfont-archer">&#xe606;</span>go</span>
@@ -689,15 +738,15 @@ docker-ce-18.03.1.ce-1.e...
     
         <span class="sidebar-tag-name" data-tags="kubernetes"><span class="iconfont-archer">&#xe606;</span>kubernetes</span>
     
-        <span class="sidebar-tag-name" data-tags="kvm"><span class="iconfont-archer">&#xe606;</span>kvm</span>
-    
-        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
-    
         <span class="sidebar-tag-name" data-tags="ovs"><span class="iconfont-archer">&#xe606;</span>ovs</span>
     
         <span class="sidebar-tag-name" data-tags="openvswitch"><span class="iconfont-archer">&#xe606;</span>openvswitch</span>
     
         <span class="sidebar-tag-name" data-tags="sdn"><span class="iconfont-archer">&#xe606;</span>sdn</span>
+    
+        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
+    
+        <span class="sidebar-tag-name" data-tags="network"><span class="iconfont-archer">&#xe606;</span>network</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -737,6 +786,8 @@ jsonContent:
         <span class="sidebar-category-name" data-categories="容器云"><span class="iconfont-archer">&#xe60a;</span>容器云</span>
     
         <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
+    
+        <span class="sidebar-category-name" data-categories="wireless"><span class="iconfont-archer">&#xe60a;</span>wireless</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
