@@ -346,6 +346,49 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2019/03/27/prometheus-introduction/" >
+            
+                <span>prometheus介绍</span>
+        </a>
+        <div class="abstract-content">
+            介绍
+有维度的数据(时序数据是通过metric名和一些k,v键值对的集合来标识)
+PromQL查询语言
+强大的展示效果(与grafana结合)
+高效的存储(prometheus自带一个基于硬盘的时序数据库,但是也可以与其他的远程存储系统集成)
+如果是自带的数据库，采集的样本将会按照两个小时分隔成快，每两个小时的块中包含一个目录，这个目录里面包含一个或者多个chunk文件，文件里面包含这个时间窗口的所有时序数据，关联时序的索引metric名和标签也包含在chunk文件里面。删除数据不会直接从这个目录里面删除。存储压缩后的数据，压缩过程在后台进行
+
+
+
+Prometheus架构图
+常用的pr...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/03/27</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "k8s">k8s</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "kubernetes">kubernetes</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "prometheus">prometheus</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2018/10/17/ldap_kerberos_install/" >
             
                 <span>ldap和kerberos安装</span>
@@ -524,9 +567,28 @@ LDAP是一款轻量级目录访问协议（Lightweight Directory Access Protocol
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 6
+        Total : 7
         </div>
         <!-- search  -->
         
@@ -536,6 +598,20 @@ LDAP是一款轻量级目录访问协议（Lightweight Directory Access Protocol
     
     
     
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/27</span><a class="archive-post-title" href= "/2019/03/27/prometheus-introduction/" >prometheus介绍</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
@@ -575,23 +651,25 @@ LDAP是一款轻量级目录访问协议（Lightweight Directory Access Protocol
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="golang"><span class="iconfont-archer">&#xe606;</span>golang</span>
-    
-        <span class="sidebar-tag-name" data-tags="go"><span class="iconfont-archer">&#xe606;</span>go</span>
-    
         <span class="sidebar-tag-name" data-tags="kvm"><span class="iconfont-archer">&#xe606;</span>kvm</span>
-    
-        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
     
         <span class="sidebar-tag-name" data-tags="k8s"><span class="iconfont-archer">&#xe606;</span>k8s</span>
     
         <span class="sidebar-tag-name" data-tags="kubernetes"><span class="iconfont-archer">&#xe606;</span>kubernetes</span>
+    
+        <span class="sidebar-tag-name" data-tags="golang"><span class="iconfont-archer">&#xe606;</span>golang</span>
+    
+        <span class="sidebar-tag-name" data-tags="go"><span class="iconfont-archer">&#xe606;</span>go</span>
+    
+        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
     
         <span class="sidebar-tag-name" data-tags="ovs"><span class="iconfont-archer">&#xe606;</span>ovs</span>
     
         <span class="sidebar-tag-name" data-tags="openvswitch"><span class="iconfont-archer">&#xe606;</span>openvswitch</span>
     
         <span class="sidebar-tag-name" data-tags="sdn"><span class="iconfont-archer">&#xe606;</span>sdn</span>
+    
+        <span class="sidebar-tag-name" data-tags="prometheus"><span class="iconfont-archer">&#xe606;</span>prometheus</span>
     
         <span class="sidebar-tag-name" data-tags="network"><span class="iconfont-archer">&#xe606;</span>network</span>
     
@@ -628,11 +706,11 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
+        <span class="sidebar-category-name" data-categories="容器云"><span class="iconfont-archer">&#xe60a;</span>容器云</span>
+    
         <span class="sidebar-category-name" data-categories="编程"><span class="iconfont-archer">&#xe60a;</span>编程</span>
     
         <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
-    
-        <span class="sidebar-category-name" data-categories="容器云"><span class="iconfont-archer">&#xe60a;</span>容器云</span>
     
         <span class="sidebar-category-name" data-categories="wireless"><span class="iconfont-archer">&#xe60a;</span>wireless</span>
     
