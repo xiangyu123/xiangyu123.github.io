@@ -276,7 +276,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">224</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">362</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -407,15 +407,25 @@ height:50vh;
     <article class="article-entry">
         <h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><ul>
 <li>有维度的数据(时序数据是通过metric名和一些k,v键值对的集合来标识)</li>
-<li>PromQL查询语言</li>
+<li>灵活的PromQL查询语言</li>
 <li>强大的展示效果(与grafana结合)</li>
 <li>高效的存储(prometheus自带一个基于硬盘的时序数据库,但是也可以与其他的远程存储系统集成)<blockquote>
 <p>如果是自带的数据库，采集的样本将会按照两个小时分隔成快，每两个小时的块中包含一个目录，这个目录里面包含一个或者多个chunk文件，文件里面包含这个时间窗口的所有时序数据，关联时序的索引metric名和标签也包含在chunk文件里面。删除数据不会直接从这个目录里面删除。存储压缩后的数据，压缩过程在后台进行</p>
 </blockquote>
 </li>
+<li>简单部署，由于都是go编写的二进制文件</li>
+<li>精确的报警,支持告警抑制和静默,支持告警分组,很方便的配置告警发送规则</li>
+<li>多种语言库的支持 </li>
+<li>自带很多的exporter和其他工具的集成 <a href="https://prometheus.io/docs/instrumenting/exporters/" target="_blank" rel="noopener">详见</a></li>
+<li>Http pull模式拉取时间序列</li>
+<li>可以通过中间网关来做时序数据推送</li>
+<li>监控target的发现可以使用服务发现，也可以使用静态配置</li>
 </ul>
 <h4 id="Prometheus架构图"><a href="#Prometheus架构图" class="headerlink" title="Prometheus架构图"></a>Prometheus架构图</h4><p><img src="/2019/03/27/prometheus-introduction/prometheus2.jpg" alt="image"></p>
 <h4 id="常用的prometheus架构图"><a href="#常用的prometheus架构图" class="headerlink" title="常用的prometheus架构图"></a>常用的prometheus架构图</h4><p><img src="/2019/03/27/prometheus-introduction/prometheus1.jpg" alt="image"></p>
+<h4 id="Prometheus的metric示例"><a href="#Prometheus的metric示例" class="headerlink" title="Prometheus的metric示例"></a>Prometheus的metric示例</h4><ul>
+<li>http_requests_total{service=”users-directory”, instance=”1.2.3.4”}</li>
+</ul>
 
     </article>
     <!-- license  -->
@@ -424,7 +434,7 @@ height:50vh;
             <p>原文作者：<a href="http://xiangyu123.github.io">Tobey</a>
             <p>原文链接：<a href="http://xiangyu123.github.io/2019/03/27/prometheus-introduction/">http://xiangyu123.github.io/2019/03/27/prometheus-introduction/</a>
             <p>发表日期：<a href="http://xiangyu123.github.io/2019/03/27/prometheus-introduction/">March 27th 2019, 3:25:49 pm</a>
-            <p>更新日期：<a href="http://xiangyu123.github.io/2019/03/27/prometheus-introduction/">March 27th 2019, 3:34:29 pm</a>
+            <p>更新日期：<a href="http://xiangyu123.github.io/2019/03/27/prometheus-introduction/">March 28th 2019, 2:20:53 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -556,7 +566,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Prometheus架构图"><span class="toc-number">2.</span> <span class="toc-text">Prometheus架构图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#常用的prometheus架构图"><span class="toc-number">3.</span> <span class="toc-text">常用的prometheus架构图</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#介绍"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Prometheus架构图"><span class="toc-number">2.</span> <span class="toc-text">Prometheus架构图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#常用的prometheus架构图"><span class="toc-number">3.</span> <span class="toc-text">常用的prometheus架构图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Prometheus的metric示例"><span class="toc-number">4.</span> <span class="toc-text">Prometheus的metric示例</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -707,8 +717,6 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="kvm"><span class="iconfont-archer">&#xe606;</span>kvm</span>
-    
         <span class="sidebar-tag-name" data-tags="k8s"><span class="iconfont-archer">&#xe606;</span>k8s</span>
     
         <span class="sidebar-tag-name" data-tags="kubernetes"><span class="iconfont-archer">&#xe606;</span>kubernetes</span>
@@ -717,7 +725,7 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="go"><span class="iconfont-archer">&#xe606;</span>go</span>
     
-        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
+        <span class="sidebar-tag-name" data-tags="kvm"><span class="iconfont-archer">&#xe606;</span>kvm</span>
     
         <span class="sidebar-tag-name" data-tags="ovs"><span class="iconfont-archer">&#xe606;</span>ovs</span>
     
@@ -725,9 +733,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="sdn"><span class="iconfont-archer">&#xe606;</span>sdn</span>
     
-        <span class="sidebar-tag-name" data-tags="prometheus"><span class="iconfont-archer">&#xe606;</span>prometheus</span>
+        <span class="sidebar-tag-name" data-tags="ldap"><span class="iconfont-archer">&#xe606;</span>ldap</span>
     
         <span class="sidebar-tag-name" data-tags="network"><span class="iconfont-archer">&#xe606;</span>network</span>
+    
+        <span class="sidebar-tag-name" data-tags="prometheus"><span class="iconfont-archer">&#xe606;</span>prometheus</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
